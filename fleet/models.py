@@ -26,7 +26,7 @@ class Driver(models.Model):
         return self.user.first_name
     
 class Vehicle(models.Model):
-    driver=models.ForeignKey(Driver,on_delete=models.CASCADE)
+    driver=models.ForeignKey(Driver,on_delete=models.CASCADE,related_name='vehicle')
     plate_number=models.CharField(max_length=10)
     
     def __str__(self):
