@@ -14,7 +14,7 @@ class JobFormField(models.Model):
 
     def __str__(self):
         return self.field_name
-
+    
 class SelectOption(models.Model):
     job_form = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='select_options')
     option_value = models.CharField(max_length=100)

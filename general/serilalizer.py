@@ -5,9 +5,8 @@ from .models import *
 class SelectOptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SelectOption
-        fields = ['id', 'option_value']
+        fields = ['option_value']
         
-
 class JobFormFieldSerializer(serializers.ModelSerializer):
     select_options = SelectOptionSerializer(many=True, read_only=True)
     
