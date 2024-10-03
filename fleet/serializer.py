@@ -5,7 +5,7 @@ from fleet.models import User
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
-        fields = ['plate_number']
+        fields = ['vehicle_name','vehicle_type','plate_number']
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
