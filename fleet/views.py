@@ -11,8 +11,13 @@ class DriverDetails(RetrieveAPIView):
 
     def get(self, request, *args, **kwargs):
 
-        id=request.user.id  
-        driver=Driver.objects.get(user__id=id)
-
-        serializer=DriverSerializer(driver)
-        return Response(serializer.data)
+        try:
+            driver=Driver.objects.get(user=request.user)
+            if driver is not None:
+                serializer=DriverSerializer(driver)
+                return Response(serializer.data)
+            
+        except Exception as e :
+            return Response({
+                "error":e
+            })

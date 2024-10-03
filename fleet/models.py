@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import User
-import uuid,random,string
+import uuid,random
 
 # Create your models here.
 
