@@ -26,14 +26,15 @@ class Driver(models.Model):
     
 class Vehicle(models.Model):
     class VehicleTypes(models.TextChoices):
-        flated_truck="flatbed_truck","Flatbed Trucks"
-        number="number","Tail-Lift Trucks"
-        boolean="box_trucks","Box Trucks"
-        dump_trucks="dump_trucks","Dump Trucks"
-        semi_trailer_trucks="semi_trailer_trucks","Semi-Trailer Trucks"
-        jumbo_trailer_trucks="jumbo_trailer_trucks","Jumbo Trailer Trucks"
-        tanker_trucks="tanker_trucks","Tanker Trucks"
-        refrigerated_trucks="refrigerated_trucks","Refrigerated Trucks"
+        # left for value and right for selection name in db
+        flated_truck="Flatbed Trucks","Flatbed Trucks"
+        tail_lift_trucks="Tail-Lift Trucks","Tail-Lift Trucks"
+        box_trucks="Box Trucks","Box Trucks"
+        dump_trucks="Dump Trucks","Dump Trucks"
+        semi_trailer_trucks="Semi-Trailer Trucks","Semi-Trailer Trucks"
+        jumbo_trailer_trucks="Jumbo Trailer Trucks","Jumbo Trailer Trucks"
+        tanker_trucks="Tanker Trucks","Tanker Trucks"
+        refrigerated_trucks="Refrigerated Trucks","Refrigerated Trucks"
 
     driver=models.ForeignKey(Driver,on_delete=models.CASCADE,related_name='vehicle')
     vehicle_name=models.CharField(max_length=100,null=True,blank=True)

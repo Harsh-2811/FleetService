@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'user',
     'fleet',
     'general',
+    'jobs',
 
     # install apps
     'rest_framework',

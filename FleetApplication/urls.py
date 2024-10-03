@@ -10,6 +10,8 @@ urlpatterns = [
     path('api/fleet/',include('fleet.urls')),
 
     path('api/form_fields/',include('general.urls')),
+
+    path('api/start_job/',include('jobs.urls')),
 ]
 
 

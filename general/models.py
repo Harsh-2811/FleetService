@@ -4,10 +4,10 @@ from django.db import models
 
 class JobFormField(models.Model):
     class FieldsTypes(models.TextChoices):
-        text="text","Text"
-        number="number","Number"
-        boolean="boolean","Boolean"
-        select="select","Select"
+        text="Text","Text"
+        number="Number","Number"
+        boolean="Boolean","Boolean"
+        select="Select","Select"
     
     field_name = models.CharField(max_length=100)
     field_type = models.CharField(max_length=50,choices=FieldsTypes.choices)
