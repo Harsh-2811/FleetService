@@ -8,16 +8,7 @@ class DriverDetails(RetrieveAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = DriverSerializer
+    queryset=Driver.objects.all()
 
-    def get(self, request, *args, **kwargs):
-
-        try:
-            driver=Driver.objects.get(user=request.user)
-            if driver is not None:
-                serializer=DriverSerializer(driver)
-                return Response(serializer.data)
-            
-        except Exception as e :
-            return Response({
-                "error":e
-            })
+    def get_object(self):
+        return Driver.objects.get(user=self.request.user)
