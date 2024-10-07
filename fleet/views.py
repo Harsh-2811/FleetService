@@ -9,7 +9,6 @@ class DriverDetails(RetrieveAPIView):
 
     permission_classes = [IsAuthenticated]
     serializer_class = DriverSerializer
-    queryset=Driver.objects.all()
 
     def get_object(self):
         try:
