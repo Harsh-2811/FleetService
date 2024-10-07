@@ -14,4 +14,4 @@ class JobSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Job
-        fields=['job_data','job_status','job_info']
+        fields=['job_title','job_data','job_status','job_info','job_time']

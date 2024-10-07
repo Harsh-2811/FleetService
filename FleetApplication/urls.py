@@ -11,7 +11,7 @@ urlpatterns = [
 
     path('api/general/form_fields/',include('general.urls')),
 
-    path('api/job/start_job/',include('jobs.urls')),
+    path('api/job/',include('jobs.urls')),
 ]
 
 

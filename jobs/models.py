@@ -11,11 +11,13 @@ class Job(models.Model):
         FINISHED = 'Finished', 'Finished'
         BREAK = 'Break', 'Break'
 
-    job_data = models.TextField(max_length=200)
+    job_title = models.CharField(max_length=150,null=True,blank=True)
+    job_data = models.TextField(max_length=200,null=True,blank=True)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='jobs')
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
+    job_time = models.DateTimeField(null=True, blank=True)
     started_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)
     break_end = models.DateTimeField(null=True, blank=True)
