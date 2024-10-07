@@ -1,5 +1,6 @@
 from rest_framework.generics import RetrieveAPIView
 from rest_framework.response import Response
+from rest_framework.exceptions import NotFound
 from .serializer import *
 from rest_framework.permissions import IsAuthenticated
 
@@ -11,4 +12,7 @@ class DriverDetails(RetrieveAPIView):
     queryset=Driver.objects.all()
 
     def get_object(self):
-        return Driver.objects.get(user=self.request.user)
+        try:
+            return Driver.objects.get(user=self.request.user)
+        except Driver.DoesNotExist:
+            raise NotFound(detail="Driver not found")
