@@ -1,107 +1,10 @@
 from rest_framework.generics import ListAPIView,UpdateAPIView,GenericAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
 import datetime
 from .serializer import *
 from jobs.models import *
-from drf_spectacular.utils import extend_schema,OpenApiSchemaBase
-
-from drf_spectacular.types import OpenApiTypes
-
-from rest_framework.response import Response
-import json
-
-# class CustomRequestBodySchema(OpenApiSchema):
-#     def __init__(self):
-#         super().__init__(
-#             type=OpenApiTypes.OBJECT,
-#             properties={
-#                 "job_info": OpenApiTypes.JSON_PTR,
-#                 "job_data": OpenApiTypes.STRING,
-#                 "driver": OpenApiTypes.INTEGER,
-#             },
-#             required=["job_title", "job_data", "driver"],
-#         )
-
-
-# Create your views here.
-# class StartJob(UpdateAPIView):
-    
-    # queryset = Job.objects.all()
-    # permission_classes=[IsAuthenticated]
-    
-    
-    # serializer_class=JobInfoRequestSerializer
-    # lookup_field = 'pk'
-
-    # http_method_names=['patch']
-
-    # serializer_class=StartJobSerializer
-    
-    # request_schema = {
-    #     'type': OpenApiTypes.JSON_PTR,
-    #     'items': {
-    #         'type': OpenApiTypes.OBJECT,
-    #         'properties': {
-    #             'form_field': {'type': OpenApiTypes.INT},
-    #             'value': {'type': OpenApiTypes.STR}
-    #         },
-    #         'required': ['form_field', 'value']
-    #     }
-    # }
-
-    # @extend_schema(
-    #     request=request_schema,  # Specify the request schema
-    #     # summary="Start Job",  # Optional: summary of the operation
-    #     # description="This is decriptionssssssssss"
-    # )
-
-    # def patch(self, request, *args, **kwargs):
-    #     return super().patch(request, *args, **kwargs)
-
-class StartJob(GenericAPIView):
-    def patch(self,request,pk,*args,**kwargs):
-        # print("************************************")
-        # print(self.kwargs)
-        # print(json.loads(self.request.body))
-        data=json.loads(self.request.body)['job_info']
-
-        job=Job.objects.filter(id=pk).first()
-        print(job)
-        try:
-            for d in data:
-
-                exists=JobInfo.objects.get(
-                    job=job,
-                    form_field=JobFormField.objects.get(id=d['form_field']),
-                    value=d['value']
-                )
-                if exists:
-                    return Response({
-                        "Error":"The given value is already exists."
-                    })
-                    
-                jobInfos=JobInfo.objects.create(
-                    job=job,
-                    form_field=JobFormField.objects.get(id=d['form_field']),
-                    value=d['value']
-                )
-                # print("************ JOB INFO CREATE *****************************")
-                # print(jobInfos)
-
-            job_info=JobInfo.objects.filter(job=job)
-            serializer=JobInfoSerializer(data=job_info,many=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-                
-            else:
-                return Response(serializer.errors)
-
-        except JobInfo.DoesNotExist:
-            return Response({
-                "Error":"Object Does not exists."
-            })
 
 class Jobs(ListAPIView):
     permission_classes=[IsAuthenticated]
