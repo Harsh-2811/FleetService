@@ -57,11 +57,12 @@ class AddJobInfoView(APIView):
 class JobImageViewSet(viewsets.ModelViewSet):
     queryset = JobImage.objects.all()
     serializer_class = JobImageSerializer
+    http_method_names = ['post']
 
     def create(self, request, *args, **kwargs):
         action_type = request.data.get('action_type')
-        # images = list(request.data.get('images',[]))
         images = request.FILES.getlist('images')
+
 
         try:
             job_id=request.data.get('job_id')
@@ -84,3 +85,4 @@ class JobImageViewSet(viewsets.ModelViewSet):
                 return Response(serializer.errors)
 
         return Response(responses)
+
