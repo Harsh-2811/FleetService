@@ -67,3 +67,15 @@ class JobInfo(models.Model):
 
     def __str__(self):
         return f"Job_Field: {self.form_field.field_name}, Value: {self.value}"
+
+class JobImage(models.Model):
+    class ActionType(models.TextChoices):
+        arrive_job = "arrive_job", "Arrive Job"
+        arrive_site = "arrive_site", "Arrive Site"
+
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_image')
+    action_type = models.CharField(max_length=11,choices=ActionType.choices)
+    image=models.ImageField(upload_to='images/',null=True,blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

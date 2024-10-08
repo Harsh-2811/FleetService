@@ -19,3 +19,10 @@ class JobInfoAdmin(admin.ModelAdmin):
         'value',
     ]
 admin.site.register(JobInfo,JobInfoAdmin)
+
+class JobImageAdmin(admin.ModelAdmin):
+    list_display=[
+        'job',
+        'action_type',
+    ]
+admin.site.register(JobImage,JobImageAdmin)
