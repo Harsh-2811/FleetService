@@ -8,7 +8,7 @@ class SelectOptionInline(admin.TabularInline):
     extra = 1
 
 class JobFormAdmin(admin.ModelAdmin):
-    list_display = ('field_name', 'field_type')
+    list_display = ('id','field_name', 'field_type')
     inlines = [SelectOptionInline]
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):

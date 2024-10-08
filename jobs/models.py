@@ -3,6 +3,7 @@ from django.utils import timezone
 from fleet.models import Driver
 from general.models import *
 from .models import *
+from datetime import timedelta
 
 class Job(models.Model):
     class JobStatus(models.TextChoices):
@@ -17,7 +18,8 @@ class Job(models.Model):
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
-    job_time = models.DateTimeField(null=True, blank=True)
+    job_time = models.DurationField(null=True, blank=True,help_text="1:2 for 1 hr 2 mins")
+    
     started_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)
     break_end = models.DateTimeField(null=True, blank=True)
@@ -26,8 +28,19 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def set_duration_from_string(self, duration_str):
+        # Example: "1 hr 2 min" -> timedelta(hours=1, minutes=2)
+        hours, minutes = 0, 0
+        if "hr" in duration_str:
+            hours = int(duration_str.split("hr")[0].strip())
+        if "minns" in duration_str:
+            minutes = int(duration_str.split("minus")[0].split()[-1].strip())
+        
+        self.job_duration = timedelta(hours=hours, minutes=minutes)
+        self.save()
+
     def __str__(self):
-        return f"{self.driver.user.first_name} - {self.job_data} - {self.job_status}"
+        return f"{self.driver.user.first_name} - {self.job_title} - {self.job_status}"
 
 class JobInfo(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_info')
