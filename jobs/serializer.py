@@ -57,12 +57,29 @@ class JobImageSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         request = self.context.get('request')
         action_type = attrs.get('action_type')
-        images = request.FILES.getlist('images')
+        job=request.data.get('job')
+        try:
+            images=JobImage.objects.filter(job=job,action_type=action_type)
+            if action_type == JobImage.ActionType.arrive_job and len(images) >= 4:
+                raise serializers.ValidationError("Images for Arrive Job  is already exists.")
+        
+            if action_type == JobImage.ActionType.arrive_site and len(images) >= 5:
+                raise serializers.ValidationError("Images for Arrive Site  is already exists.")
 
+        except Exception as e:
+            raise serializers.ValidationError(f"Images are already exists for {action_type}")
+
+        images = request.FILES.getlist('images')
         if action_type == JobImage.ActionType.arrive_job and len(images) > 4:
             raise serializers.ValidationError("You can upload a maximum of 4 images for Arrive Job.")
         
         if action_type == JobImage.ActionType.arrive_site and len(images) > 5:
             raise serializers.ValidationError("You can upload a maximum of 5 images for Arrive Site.")
+
+        if action_type == JobImage.ActionType.arrive_job and len(images) < 4:
+            raise serializers.ValidationError("You have to upload 4 images for Arrive Job.")
+        
+        if action_type == JobImage.ActionType.arrive_site and len(images) < 5:
+            raise serializers.ValidationError("You have to upload 5 images for Arrive Site.")
 
         return attrs

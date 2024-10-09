@@ -55,7 +55,7 @@ class AddJobInfoView(APIView):
 
 # ModelViewSet
 class JobImageViewSet(viewsets.ModelViewSet):
-    queryset = JobImage.objects.all()
+    # queryset = JobImage.objects.all()
     serializer_class = JobImageSerializer
     http_method_names = ['post']
 
@@ -63,12 +63,11 @@ class JobImageViewSet(viewsets.ModelViewSet):
         action_type = request.data.get('action_type')
         images = request.FILES.getlist('images')
 
-
         try:
-            job_id=request.data.get('job_id')
-            job = Job.objects.get(id=job_id)
-        except Job.DoesNotExist:
-            return Response({"error": "Job with the specified ID does not exist."})
+            job=request.data.get('job')
+            # job = Job.objects.get(id=job_id)
+        except Exception as e:
+            return Response({"error": "job_id is not provided."})
 
         if not images:
             return Response({"error": "No images provided."})
@@ -76,7 +75,7 @@ class JobImageViewSet(viewsets.ModelViewSet):
         responses = []
         for image in images:
 
-            data = {'job':job_id,'image': image, 'action_type': action_type}
+            data = {'job':job,'image': image, 'action_type': action_type}
             serializer = self.get_serializer(data=data,context={'request': request})
             if serializer.is_valid():
                 serializer.save()
