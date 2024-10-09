@@ -7,10 +7,7 @@ from .serializer import *
 from jobs.models import *
 from rest_framework.views import APIView
 from rest_framework import viewsets
-import json
-
-from drf_spectacular.utils import extend_schema
-
+from drf_spectacular.utils import extend_schema, OpenApiExample
 
 class Jobs(ListAPIView):
     permission_classes=[IsAuthenticated]
@@ -23,12 +20,33 @@ class Jobs(ListAPIView):
         except Driver.DoesNotExist:
             raise NotFound(detail="Jobs are not found created today.")
 
+# StartJobView
 class AddJobInfoView(APIView):
-    
+
+    @extend_schema(
+        request=JobInfoSerializer,  # Define the request body schema here
+        responses={201: JobInfoSerializer},  # Define the response schema
+        examples=[
+            OpenApiExample(
+                'Start Job and Add Job Info',
+                value={
+                    "job_info": [
+                        {
+                            "form_field":1,
+                            "value":"value"
+                        }
+                    ],
+                },
+                request_only=True
+            )
+        ]
+    )
     def patch(self, request, pk):
         try:
             job = Job.objects.get(id=pk)
             job.job_status=Job.JobStatus.RUNNING
+            job.started_at=datetime.datetime.now()
+            job.save()
         except Job.DoesNotExist:
             return Response({'error': 'Job not found'})
 
@@ -51,11 +69,63 @@ class AddJobInfoView(APIView):
         if errors:
             return Response({'errors': errors})
         
-        return Response({'message': 'Job info successfully added'})
+        return Response({'message': 'Job is Started and Job info added successfully...'})
+
+class BreakJobView(APIView):
+
+    @extend_schema(
+        request=JobInfoSerializer,  # Define the request body schema here
+        responses={201: JobInfoSerializer},  # Define the response schema
+        examples=[
+            OpenApiExample(
+                'Start or End Job.',
+                value={
+                        "break_type":"start"
+                    },
+                request_only=True
+            )
+        ]
+    )
+    def patch(self, request, pk):
+        try:
+            job = Job.objects.get(id=pk)
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found'})
+
+        try:
+            break_type = request.data.get('break_type').lower()
+            if break_type == 'start':
+                job.job_status=Job.JobStatus.BREAK
+                job.break_start=datetime.datetime.now()
+                job.save()
+                return Response({'message': 'Job Break is Started...'})
+            elif break_type == 'end':
+                job.job_status=Job.JobStatus.RUNNING
+                job.break_end=datetime.datetime.now()
+                job.save()
+                return Response({'message': 'Job Break is Ended...'})
+            else:
+                return Response({'message': 'Enter Proper Break Type...'})
+
+        except Exception as e:
+            return Response({"Error":"Payload should be a break_type key and type pair value."})
+
+class FinishJobView(APIView):
+    serialzer_class=JobSerializer
+
+    def patch(self, request, pk):
+        try:
+            job = Job.objects.get(id=pk)
+            job.job_status=Job.JobStatus.FINISHED
+            job.finished_at=datetime.datetime.now()
+            job.save()
+        except Job.DoesNotExist:
+            return Response({'error': 'Job not found'})
+
+        return Response({'message': 'Job Finished...'})
 
 # ModelViewSet
 class JobImageViewSet(viewsets.ModelViewSet):
-    # queryset = JobImage.objects.all()
     serializer_class = JobImageSerializer
     http_method_names = ['post']
 
@@ -65,7 +135,6 @@ class JobImageViewSet(viewsets.ModelViewSet):
 
         try:
             job=request.data.get('job')
-            # job = Job.objects.get(id=job_id)
         except Exception as e:
             return Response({"error": "job_id is not provided."})
 
