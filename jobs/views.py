@@ -22,7 +22,8 @@ class Jobs(ListAPIView):
 
 # StartJobView
 class AddJobInfoView(APIView):
-
+    permission_classes=[IsAuthenticated]
+    
     @extend_schema(
         request=JobInfoSerializer,  # Define the request body schema here
         responses={201: JobInfoSerializer},  # Define the response schema
@@ -72,7 +73,8 @@ class AddJobInfoView(APIView):
         return Response({'message': 'Job is Started and Job info added successfully...'})
 
 class BreakJobView(APIView):
-
+    permission_classes=[IsAuthenticated]
+    
     @extend_schema(
         request=JobInfoSerializer,  # Define the request body schema here
         responses={201: JobInfoSerializer},  # Define the response schema
@@ -111,6 +113,7 @@ class BreakJobView(APIView):
             return Response({"Error":"Payload should be a break_type key and type pair value."})
 
 class FinishJobView(APIView):
+    permission_classes=[IsAuthenticated]
     serialzer_class=JobSerializer
 
     def patch(self, request, pk):
@@ -126,6 +129,7 @@ class FinishJobView(APIView):
 
 # ModelViewSet
 class JobImageViewSet(viewsets.ModelViewSet):
+    permission_classes=[IsAuthenticated]
     serializer_class = JobImageSerializer
     http_method_names = ['post']
 
