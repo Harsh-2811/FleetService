@@ -7,6 +7,7 @@ class JobAdmin(admin.ModelAdmin):
         'driver',
         'id',
         'job_title',
+        'job_status',
         'job_data',
     ]
 admin.site.register(Job,JobAdmin)

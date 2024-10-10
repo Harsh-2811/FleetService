@@ -27,14 +27,12 @@ class JobInfoSerializer(serializers.Serializer):
             value=validated_data['value']
         )
 
-
 class JobSerializer(serializers.ModelSerializer):
     job_info=JobInfoSerializer(many=True,read_only=True)
 
     class Meta:
         model = Job
         fields=['id','job_title','job_data','job_status','job_info','job_time']
-
 
 class Base64ImageFieldSerializer(serializers.ImageField):
     def to_internal_value(self, data):
@@ -60,10 +58,10 @@ class JobImageSerializer(serializers.ModelSerializer):
         job=request.data.get('job')
         try:
             images=JobImage.objects.filter(job=job,action_type=action_type)
-            if action_type == JobImage.ActionType.arrive_job and len(images) >= 4:
+            if action_type == JobImage.ActionType.arrive_job and len(images) == 4:
                 raise serializers.ValidationError("Images for Arrive Job  is already exists.")
         
-            if action_type == JobImage.ActionType.arrive_site and len(images) >= 5:
+            if action_type == JobImage.ActionType.arrive_site and len(images) == 5:
                 raise serializers.ValidationError("Images for Arrive Site  is already exists.")
 
         except Exception as e:
