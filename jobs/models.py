@@ -4,6 +4,7 @@ from fleet.models import Driver
 from general.models import *
 from .models import *
 from datetime import timedelta
+from fleet.models import Vehicle
 
 class Job(models.Model):
     class JobStatus(models.TextChoices):
@@ -18,7 +19,9 @@ class Job(models.Model):
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
-    job_time = models.DurationField(null=True, blank=True,help_text="1:2 for 1 hr 2 mins")
+    job_time = models.TimeField(null=True, blank=True)
+    job_duration = models.DurationField(null=True, blank=True,help_text="Example: 1:2 for 1 hr 2 mins")
+    vehicle=models.ForeignKey(Vehicle,on_delete=models.CASCADE, related_name='jobs')
     
     started_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)

@@ -4,8 +4,8 @@ from .models import *
 # Register your models here.
 class JobAdmin(admin.ModelAdmin):
     list_display=[
-        'driver',
         'id',
+        'driver',
         'job_title',
         'job_status',
         'job_data',

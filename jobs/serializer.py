@@ -1,8 +1,8 @@
 from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
 from general.serilalizer import *
 from .models import *
 import base64
-from rest_framework.response import Response
 from django.core.files.base import ContentFile
         
 class JobInfoSerializer(serializers.Serializer):
@@ -28,11 +28,12 @@ class JobInfoSerializer(serializers.Serializer):
         )
 
 class JobSerializer(serializers.ModelSerializer):
+    permission_class=[IsAuthenticated]
     job_info=JobInfoSerializer(many=True,read_only=True)
 
     class Meta:
         model = Job
-        fields=['id','job_title','job_data','job_status','job_info','job_time']
+        fields=['id','job_title','vehicle','job_data','job_status','job_info','job_time']
 
 class Base64ImageFieldSerializer(serializers.ImageField):
     def to_internal_value(self, data):

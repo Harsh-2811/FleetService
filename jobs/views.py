@@ -157,4 +157,3 @@ class JobImageViewSet(viewsets.ModelViewSet):
                 return Response(serializer.errors)
 
         return Response(responses)
-
