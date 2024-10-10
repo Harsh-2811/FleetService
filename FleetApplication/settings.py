@@ -47,9 +47,9 @@ INSTALLED_APPS = [
 
     # install apps
     'rest_framework',
-    # 'rest_framework_swagger',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+
     # JWT
     'rest_framework_simplejwt',
 ]
@@ -132,11 +132,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS=[BASE_DIR/'static']
-# STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles_build','static')
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL= '/uploaded/'
-MEDIA_ROOT=os.path.join(BASE_DIR,'static/uploaded/')
+MEDIA_URL= '/media/'
+MEDIA_ROOT=os.path.join(BASE_DIR,'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -157,7 +155,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Fleet Application API',
-    'DESCRIPTION': 'Your project description',
+    'DESCRIPTION': 'Fleet Application is used to track record of drivers and their jobs.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 
