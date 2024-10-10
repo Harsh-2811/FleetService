@@ -3,15 +3,25 @@ from . import views
 
 from rest_framework.routers import DefaultRouter
 
-router = DefaultRouter()
-router.register('job_images', views.JobImageViewSet,basename="job_images")
+router_job_image = DefaultRouter()
+router_job_image.register('job_images', views.JobImageViewSet,basename="job_images")
+
+router_start_job = DefaultRouter()
+router_start_job.register('job_start', views.AddJobInfoViewSet,basename="job_start")
+
+router_jobs = DefaultRouter()
+router_jobs.register('jobs', views.JobsView,basename="jobs")
+
+router_job_break = DefaultRouter()
+router_job_break.register('job_break', views.BreakJobView,basename="job_break")
+
+router_job_finish = DefaultRouter()
+router_job_finish.register('job_finish', views.FinishJobView,basename="job_finish")
 
 urlpatterns=[
-    path('jobs/',views.Jobs.as_view(),name='jobs'),
-
-    path('start_job/<int:pk>/',views.AddJobInfoView.as_view(),name='start_job'),
-    path('job_break/<int:pk>/',views.BreakJobView.as_view(),name='job_break'),
-    path('finish_job/<int:pk>/',views.FinishJobView.as_view(),name='finish_job'),
-
-    path('',include(router.urls),name='job_images'),
+    path('',include(router_jobs.urls),name='jobs'),
+    path('',include(router_start_job.urls),name='start_job'),
+    path('',include(router_job_break.urls),name='job_break'),
+    path('',include(router_job_finish.urls),name='job_finish'),
+    path('',include(router_job_image.urls),name='job_images'),
 ]

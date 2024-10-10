@@ -15,7 +15,7 @@ class Job(models.Model):
 
     job_title = models.CharField(max_length=150,null=True,blank=True)
     job_data = models.TextField(max_length=200,null=True,blank=True)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='jobs')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='drivers')
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
@@ -46,8 +46,8 @@ class Job(models.Model):
         return f"{self.driver.user.first_name} - {self.job_title} - {self.job_status}"
 
 class JobInfo(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_info')
-    form_field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='job_info')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
+    form_field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='job')
     value = models.CharField(max_length=255)
 
     def parse_value(self):

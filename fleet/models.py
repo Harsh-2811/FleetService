@@ -25,7 +25,7 @@ class Driver(models.Model):
     
 class Vehicle(models.Model):
     class VehicleTypes(models.TextChoices):
-        # left for value and right for selection name in db
+        # left for value and right for lable in admin panel
         flated_truck="Flatbed Trucks","Flatbed Trucks"
         tail_lift_trucks="Tail-Lift Trucks","Tail-Lift Trucks"
         box_trucks="Box Trucks","Box Trucks"
@@ -40,4 +40,4 @@ class Vehicle(models.Model):
     plate_number=models.CharField(max_length=10)
     
     def __str__(self):
-        return f"{self.vehicle_name}"
+        return f"{self.plate_number}-{self.vehicle_name}"
