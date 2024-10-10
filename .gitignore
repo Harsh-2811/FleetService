@@ -1,0 +1,4 @@
+*.pyc
+.env
+media
+env

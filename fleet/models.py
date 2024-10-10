@@ -1,6 +1,6 @@
 from django.db import models
 from user.models import User
-import uuid,random,string
+import uuid,random
 
 # Create your models here.
 
@@ -21,13 +21,25 @@ class Driver(models.Model):
         
         super().save(*args, **kwargs)
 
-
     def __str__(self):
         return self.user.first_name
     
 class Vehicle(models.Model):
+    class VehicleTypes(models.TextChoices):
+        # left for value and right for selection name in db
+        flated_truck="Flatbed Trucks","Flatbed Trucks"
+        tail_lift_trucks="Tail-Lift Trucks","Tail-Lift Trucks"
+        box_trucks="Box Trucks","Box Trucks"
+        dump_trucks="Dump Trucks","Dump Trucks"
+        semi_trailer_trucks="Semi-Trailer Trucks","Semi-Trailer Trucks"
+        jumbo_trailer_trucks="Jumbo Trailer Trucks","Jumbo Trailer Trucks"
+        tanker_trucks="Tanker Trucks","Tanker Trucks"
+        refrigerated_trucks="Refrigerated Trucks","Refrigerated Trucks"
+
     driver=models.ForeignKey(Driver,on_delete=models.CASCADE,related_name='vehicle')
+    vehicle_name=models.CharField(max_length=100,null=True,blank=True)
+    vehicle_type=models.CharField(max_length=100,choices=VehicleTypes.choices,null=True,blank=True)
     plate_number=models.CharField(max_length=10)
     
     def __str__(self):
-        return f"{self.driver.user.first_name}  {self.plate_number}"
+        return f"{self.driver.user.first_name}-{self.vehicle_name}"
