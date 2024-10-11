@@ -4,7 +4,8 @@ from general.serilalizer import *
 from .models import *
 import base64
 from django.core.files.base import ContentFile
-        
+# from fleet.serializer import *
+
 class JobInfoSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
 
@@ -14,11 +15,10 @@ class JobInfoSerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
-    job_info=JobInfoSerializer(many=True,read_only=True)
 
     class Meta:
         model = Job
-        fields=['id','job_title','vehicle','job_data','job_status','job_info','job_time']
+        fields=['id','job_title','vehicle','job_data','job_status','job_time']
 
 class BreakJobSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
