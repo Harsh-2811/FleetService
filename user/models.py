@@ -5,6 +5,5 @@ from django.contrib.auth.models import AbstractUser,Group
 class User(AbstractUser):
     is_driver=models.BooleanField(default=True)
 
-
     def __str__(self):
-        return self.username
+        return f"{self.username}-{self.first_name}"

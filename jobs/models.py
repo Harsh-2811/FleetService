@@ -10,8 +10,8 @@ class Job(models.Model):
     class JobStatus(models.TextChoices):
         ASSIGNED = 'Assigned', 'Assigned'
         RUNNING = 'Running', 'Running'
-        FINISHED = 'Finished', 'Finished'
         BREAK = 'Break', 'Break'
+        FINISHED = 'Finished', 'Finished'
 
     job_title = models.CharField(max_length=150,null=True,blank=True)
     job_data = models.TextField(max_length=200,null=True,blank=True)
@@ -19,9 +19,9 @@ class Job(models.Model):
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
-    job_time = models.TimeField(null=True, blank=True)
+    job_date = models.DateField(null=True, blank=True)
     job_duration = models.DurationField(null=True, blank=True,help_text="Example: 1:2 for 1 hr 2 mins")
-    vehicle=models.ForeignKey(Vehicle,on_delete=models.CASCADE, related_name='jobs')
+    vehicle=models.ForeignKey(Vehicle,on_delete=models.CASCADE, related_name='vehicles')
     
     started_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)
