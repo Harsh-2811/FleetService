@@ -57,7 +57,7 @@ admin.site.register(JobInfo,JobInfoAdmin)
 
 class JobImageAdmin(admin.ModelAdmin):
     list_display=[
-        'job',
+        'job_id',
         'action_type',
     ]
 

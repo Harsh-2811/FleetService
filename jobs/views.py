@@ -4,10 +4,14 @@ import datetime
 from .serializer import *
 from jobs.models import *
 from rest_framework.viewsets import ModelViewSet
+from django_filters.rest_framework import DjangoFilterBackend
+from .filters import *
 
 class JobsView(ModelViewSet):
     permission_classes=[IsAuthenticated]
     serializer_class=JobSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = JobStatusFilter
     queryset=Job.objects.all()
     http_method_names=['get']
 
@@ -15,12 +19,9 @@ class JobsView(ModelViewSet):
         today = datetime.datetime.today()
         queryset = super().get_queryset()
 
-        job_status=self.request.data.get('job_status').capitalize()
-        print("Job Status is ",job_status)
         queryset = queryset.filter(
             driver__user=self.request.user,
             created_at__date=today,
-            job_status=job_status
         ) 
         return queryset
 
@@ -28,7 +29,19 @@ class JobsView(ModelViewSet):
 class AddJobInfoViewSet(ModelViewSet):
     permission_classes=[IsAuthenticated]
     serializer_class=JobInfoSerializer
+    queryset=JobInfo.objects.all()
     http_method_names=['post']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        job_info = serializer.save()
+
+        job = job_info.job
+        job.job_status = Job.JobStatus.RUNNING
+        job.save()
+
+        return Response(serializer.data)
 
 class BreakJobView(ModelViewSet):
     permission_classes=[IsAuthenticated]
