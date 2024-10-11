@@ -9,5 +9,23 @@ class DriverAdmin(admin.ModelAdmin):
         'license_number',
         'contact_number'
     ]
+
+    search_fields=[
+        'user__first_name',
+        'user__last_name',
+    ]
+
 admin.site.register(Driver,DriverAdmin)
-admin.site.register(Vehicle)
+
+class VehicleAdmin(admin.ModelAdmin):
+    list_display=[
+        'vehicle_name',
+        'plate_number',
+        'vehicle_type',
+    ]
+
+    search_fields=[
+        'plate_number',
+    ]
+
+admin.site.register(Vehicle,VehicleAdmin)

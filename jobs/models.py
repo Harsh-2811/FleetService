@@ -4,6 +4,7 @@ from fleet.models import Driver
 from general.models import *
 from .models import *
 from datetime import timedelta
+from fleet.models import Vehicle
 
 class Job(models.Model):
     class JobStatus(models.TextChoices):
@@ -14,11 +15,13 @@ class Job(models.Model):
 
     job_title = models.CharField(max_length=150,null=True,blank=True)
     job_data = models.TextField(max_length=200,null=True,blank=True)
-    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='jobs')
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='drivers')
 
     job_status = models.CharField(max_length=10,choices=JobStatus.choices,default=JobStatus.ASSIGNED)
 
-    job_time = models.DurationField(null=True, blank=True,help_text="1:2 for 1 hr 2 mins")
+    job_time = models.TimeField(null=True, blank=True)
+    job_duration = models.DurationField(null=True, blank=True,help_text="Example: 1:2 for 1 hr 2 mins")
+    vehicle=models.ForeignKey(Vehicle,on_delete=models.CASCADE, related_name='jobs')
     
     started_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)
@@ -43,8 +46,8 @@ class Job(models.Model):
         return f"{self.driver.user.first_name} - {self.job_title} - {self.job_status}"
 
 class JobInfo(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_info')
-    form_field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='job_info')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
+    form_field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='job')
     value = models.CharField(max_length=255)
 
     def parse_value(self):

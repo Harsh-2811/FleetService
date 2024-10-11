@@ -48,9 +48,11 @@ INSTALLED_APPS = [
 
     # install apps
     'rest_framework',
-    # 'rest_framework_swagger',
     'drf_spectacular',
     'drf_spectacular_sidecar',
+    'rangefilter',
+    'django_filters',
+    
     # JWT
     'rest_framework_simplejwt',
 ]
@@ -134,8 +136,6 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS=[BASE_DIR/'static']
-# STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles_build','static')
-# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 MEDIA_URL= '/media/'
 MEDIA_ROOT=os.path.join(BASE_DIR,'media')
@@ -159,7 +159,7 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Fleet Application API',
-    'DESCRIPTION': 'Your project description',
+    'DESCRIPTION': 'Fleet Application is used to track record of drivers and their jobs.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 

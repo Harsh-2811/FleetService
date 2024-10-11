@@ -1,38 +1,38 @@
 from rest_framework import serializers
+from rest_framework.permissions import IsAuthenticated
 from general.serilalizer import *
 from .models import *
 import base64
-from rest_framework.response import Response
 from django.core.files.base import ContentFile
         
-class JobInfoSerializer(serializers.Serializer):
-    form_field_id = serializers.IntegerField()
-    value = serializers.CharField()
+class JobInfoSerializer(serializers.ModelSerializer):
+    permission_class=[IsAuthenticated]
 
-    def validate_form_field_id(self, value):
-        # Check if the form field exists
-        try:
-            JobFormField.objects.get(id=value)
-        except JobFormField.DoesNotExist:
-            raise serializers.ValidationError(f"Form field with ID {value} does not exist.")
-        return value
-
-    def create(self, validated_data):
-        # Assuming validated_data has 'job' passed in context
-        job = self.context.get('job')
-        form_field = JobFormField.objects.get(id=validated_data['form_field_id'])
-        return JobInfo.objects.create(
-            job=job,
-            form_field=form_field,
-            value=validated_data['value']
-        )
+    class Meta:
+        model=JobInfo
+        fields=['job','form_field','value']
 
 class JobSerializer(serializers.ModelSerializer):
+    permission_class=[IsAuthenticated]
     job_info=JobInfoSerializer(many=True,read_only=True)
 
     class Meta:
         model = Job
-        fields=['id','job_title','job_data','job_status','job_info','job_time']
+        fields=['id','job_title','vehicle','job_data','job_status','job_info','job_time']
+
+class BreakJobSerializer(serializers.ModelSerializer):
+    permission_class=[IsAuthenticated]
+
+    class Meta:
+        model = Job
+        fields=['break_start','break_end','job_status']
+
+class FinishJobSerializer(serializers.ModelSerializer):
+    permission_class=[IsAuthenticated]
+
+    class Meta:
+        model = Job
+        fields=['started_at','finished_at','job_status']
 
 class Base64ImageFieldSerializer(serializers.ImageField):
     def to_internal_value(self, data):

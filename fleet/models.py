@@ -13,7 +13,6 @@ class Driver(models.Model):
     license_number=models.CharField(max_length=12)
     contact_number=models.CharField(max_length=12,null=True,blank=True)
 
-
     def save(self, *args, **kwargs):
         if not self.driver_id:
             unique_id = str(uuid.uuid4())[-9:]
@@ -26,7 +25,7 @@ class Driver(models.Model):
     
 class Vehicle(models.Model):
     class VehicleTypes(models.TextChoices):
-        # left for value and right for selection name in db
+        # left for value and right for lable in admin panel
         flated_truck="Flatbed Trucks","Flatbed Trucks"
         tail_lift_trucks="Tail-Lift Trucks","Tail-Lift Trucks"
         box_trucks="Box Trucks","Box Trucks"
@@ -36,10 +35,9 @@ class Vehicle(models.Model):
         tanker_trucks="Tanker Trucks","Tanker Trucks"
         refrigerated_trucks="Refrigerated Trucks","Refrigerated Trucks"
 
-    driver=models.ForeignKey(Driver,on_delete=models.CASCADE,related_name='vehicle')
     vehicle_name=models.CharField(max_length=100,null=True,blank=True)
     vehicle_type=models.CharField(max_length=100,choices=VehicleTypes.choices,null=True,blank=True)
     plate_number=models.CharField(max_length=10)
     
     def __str__(self):
-        return f"{self.driver.user.first_name}-{self.vehicle_name}"
+        return f"{self.plate_number}-{self.vehicle_name}"
