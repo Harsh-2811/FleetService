@@ -20,7 +20,7 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         
-        fields=['id','job_title','vehicle','job_data','job_status','job_time']
+        fields=['id','job_title','vehicle','job_data','job_status','job_date']
 
 
 class DriverSerializer(serializers.ModelSerializer):

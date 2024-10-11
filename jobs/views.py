@@ -19,12 +19,12 @@ class JobsView(ModelViewSet):
     http_method_names=['get']
 
     def get_queryset(self):
-        today = datetime.datetime.today()
+        today = datetime.date.today()
         queryset = super().get_queryset()
 
         queryset = queryset.filter(
             driver__user=self.request.user,
-            started_at__date=today,
+            job_date=today,
         ) 
         return queryset
 
