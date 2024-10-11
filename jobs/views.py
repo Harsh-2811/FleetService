@@ -24,7 +24,7 @@ class JobsView(ModelViewSet):
 
         queryset = queryset.filter(
             driver__user=self.request.user,
-            created_at__date=today,
+            started_at__date=today,
         ) 
         return queryset
 

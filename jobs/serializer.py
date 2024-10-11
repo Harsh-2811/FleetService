@@ -4,7 +4,7 @@ from general.serilalizer import *
 from .models import *
 import base64
 from django.core.files.base import ContentFile
-# from fleet.serializer import *
+from fleet.serializer import *
 
 class JobInfoSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
@@ -15,10 +15,52 @@ class JobInfoSerializer(serializers.ModelSerializer):
 
 class JobSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
+    vehicle=VehicleSerializer(read_only=True)
 
     class Meta:
         model = Job
+        
         fields=['id','job_title','vehicle','job_data','job_status','job_time']
+
+
+class DriverSerializer(serializers.ModelSerializer):
+    user=UserSerializer(read_only=True)
+    vehicles = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Driver
+        fields = [
+            'user',
+            'driver_id', 
+            'license_number',
+            'contact_number',
+            'vehicles',
+        ]
+
+    def get_vehicles(self, obj):
+        jobs = Job.objects.filter(driver=obj)
+        vehicles = set([job.vehicle for job in jobs])
+        return VehicleSerializer(vehicles, many=True).data
+
+class JobHistorySerializer(serializers.ModelSerializer):
+    jobs = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Driver
+        fields = [
+            'jobs',
+        ]
+
+    def get_vehicles(self, obj):
+        jobs = Job.objects.filter(driver=obj)
+        vehicles = set([job.vehicle for job in jobs])
+        return VehicleSerializer(vehicles, many=True).data
+
+    def get_jobs(self, obj):
+        jobs = Job.objects.filter(driver=obj,job_status=Job.JobStatus.FINISHED)
+        return JobSerializer(jobs, many=True).data
+        
+
 
 class BreakJobSerializer(serializers.ModelSerializer):
     permission_class=[IsAuthenticated]
