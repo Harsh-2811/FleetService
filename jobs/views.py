@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 import datetime
+from django.utils import timezone
 from .serializer import *
 from fleet.serializer import *
 from jobs.models import *
@@ -31,20 +32,9 @@ class JobsView(ModelViewSet):
 # StartJobView
 class AddJobInfoViewSet(ModelViewSet):
     permission_classes=[IsAuthenticated]
-    serializer_class=JobInfoSerializer
+    serializer_class=JobInfoManySerializer
     queryset=JobInfo.objects.all()
     http_method_names=['post']
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        job_info = serializer.save()
-
-        job = job_info.job
-        job.job_status = Job.JobStatus.RUNNING
-        job.save()
-
-        return Response(serializer.data)
 
 class BreakJobView(ModelViewSet):
     permission_classes=[IsAuthenticated]
@@ -119,3 +109,19 @@ class JobImageViewSet(ModelViewSet):
 
         return Response(responses)
     
+
+class ActiveJobView(RetrieveAPIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class=JobSerializer
+
+    def get_object(self):
+        today = timezone.now().date()
+        try:
+            job = Job.objects.get(
+                driver__user=self.request.user,
+                job_date=today,
+                job_status__in=[Job.JobStatus.BREAK, Job.JobStatus.RUNNING]
+            )
+            return job
+        except Job.DoesNotExist:
+            raise NotFound("No active job found for today.")

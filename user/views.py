@@ -6,6 +6,7 @@ from user.models import *
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import *
 from rest_framework.permissions import AllowAny
+from fleet.serializer import Dr
 
 # Create your views here.
 class LoginUser(GenericAPIView):
@@ -20,7 +21,16 @@ class LoginUser(GenericAPIView):
 
         refresh = RefreshToken.for_user(user)
         login(self.request,user)
+        try:
+            driver = Driver.objects.get(user=user)
+        except Driver.DoesNotExist:
+            driver = None
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
+            'driver': {
+                "driver_id": driver.driver_id,
+                "license_number": driver.license_number,
+                "contact_number": driver.contact_number,
+            }
         })
