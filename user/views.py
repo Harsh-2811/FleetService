@@ -6,7 +6,6 @@ from user.models import *
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializer import *
 from rest_framework.permissions import AllowAny
-from fleet.serializer import Dr
 
 # Create your views here.
 class LoginUser(GenericAPIView):
