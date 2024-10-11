@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'drf_spectacular_sidecar',
     'rangefilter',
+    'django_filters',
     
     # JWT
     'rest_framework_simplejwt',
