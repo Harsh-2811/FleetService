@@ -9,6 +9,7 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import *
 from rest_framework.generics import RetrieveAPIView
+from rest_framework.status import HTTP_200_OK
 from rest_framework.exceptions import NotFound
 
 class JobsView(ModelViewSet):
@@ -35,6 +36,17 @@ class AddJobInfoViewSet(ModelViewSet):
     serializer_class=JobInfoManySerializer
     queryset=JobInfo.objects.all()
     http_method_names=['post']
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        instance = self.perform_create(serializer)
+        return Response(JobSerializer(instance).data, status=HTTP_200_OK)
+
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        return instance
+        
 
 class BreakJobView(ModelViewSet):
     permission_classes=[IsAuthenticated]

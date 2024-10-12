@@ -40,13 +40,12 @@ class JobInfoManySerializer(serializers.ModelSerializer):
         return job
 
 class JobSerializer(serializers.ModelSerializer):
-    permission_class = [IsAuthenticated]
     vehicle = VehicleSerializer(read_only=True)
-
+    job_info = JobInfoFieldsSerializer(many=True)
     class Meta:
         model = Job
 
-        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date"]
+        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info"]
 
 
 class DriverSerializer(serializers.ModelSerializer):

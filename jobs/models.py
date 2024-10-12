@@ -47,7 +47,7 @@ class Job(models.Model):
         return f"{self.driver.user.first_name} - {self.job_title} - {self.job_status}"
 
 class JobInfo(models.Model):
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job')
+    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_info')
     form_field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='job')
     value = models.CharField(max_length=255)
 
