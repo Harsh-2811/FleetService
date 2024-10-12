@@ -19,7 +19,7 @@ class LoginUser(GenericAPIView):
         user = serializer.validated_data['user']
 
         refresh = RefreshToken.for_user(user)
-        login(self.request,user)
+        
         try:
             driver = Driver.objects.get(user=user)
         except Driver.DoesNotExist:
