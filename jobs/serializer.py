@@ -48,6 +48,13 @@ class JobSerializer(serializers.ModelSerializer):
 
         fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info"]
 
+    def to_representation(self, instance):
+        response = super().to_representation(instance)
+        job_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_job)
+        response["job_images"] = JobImageSerializer(job_images, many=True).data
+        site_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_site)
+        response["site_images"] = JobImageSerializer(site_images, many=True).data
+        return response
 
 class DriverSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
