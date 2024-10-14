@@ -50,10 +50,10 @@ class JobSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         response = super().to_representation(instance)
-        job_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_job)
-        response["job_images"] = JobImageSerializer(job_images, many=True).data
-        site_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_site)
-        response["site_images"] = JobImageSerializer(site_images, many=True).data
+        job_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_job).values_list("image", flat=True)
+        response["job_images"] = list(job_images)
+        site_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_site).values_list("image", flat=True)
+        response["site_images"] = list(site_images)
         return response
 
 class DriverSerializer(serializers.ModelSerializer):
