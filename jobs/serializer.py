@@ -35,6 +35,7 @@ class JobInfoManySerializer(serializers.ModelSerializer):
             JobInfo.objects.create(job=job, **form_field)
         
         job.job_status = Job.JobStatus.RUNNING
+        job.started_at = timezone.now()
         job.save()
 
         return job
