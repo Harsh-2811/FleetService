@@ -28,6 +28,7 @@ class Job(models.Model):
     break_start = models.DateTimeField(null=True, blank=True)
     break_end = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
+    finish_reason = models.TextField(max_length=200,null=True,blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -76,6 +77,7 @@ class JobImage(models.Model):
     class ActionType(models.TextChoices):
         arrive_job = "arrive_job", "Arrive Job"
         arrive_site = "arrive_site", "Arrive Site"
+        finish_job = "finish_job", "Finish Job"
 
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_image')
     action_type = models.CharField(max_length=11,choices=ActionType.choices)

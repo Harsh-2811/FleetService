@@ -102,15 +102,6 @@ class BreakJobSerializer(serializers.ModelSerializer):
         model = Job
         fields = ["break_start", "break_end", "job_status"]
 
-
-class FinishJobSerializer(serializers.ModelSerializer):
-    permission_class = [IsAuthenticated]
-
-    class Meta:
-        model = Job
-        fields = ["started_at", "finished_at", "job_status"]
-
-
 class Base64ImageFieldSerializer(serializers.ImageField):
     def to_internal_value(self, data):
         # Check if the image is base64-encoded
@@ -126,6 +117,28 @@ class Base64ImageFieldSerializer(serializers.ImageField):
             data = ContentFile(base64.b64decode(imgstr), name=f"temp.{ext}")
 
         return super().to_internal_value(data)
+    
+class FinishJobSerializer(serializers.ModelSerializer):
+    # permission_class = [IsAuthenticated]
+    images = serializers.ListField(child=Base64ImageFieldSerializer())
+
+    class Meta:
+        model = Job
+        fields = ["images", "finish_reason"]
+
+    def update(self, instance, validated_data):
+        images = validated_data.pop("images")
+        finish_reason = validated_data.get("finish_reason")
+
+        for image in images:
+            JobImage.objects.create(job=instance, image=image, action_type=JobImage.ActionType.finish_job)
+
+        instance.job_status = Job.JobStatus.FINISHED
+        instance.finished_at = timezone.now()
+        instance.finish_reason = finish_reason
+        instance.save()
+
+        return instance
 
 
 class JobImageSerializer(serializers.ModelSerializer):

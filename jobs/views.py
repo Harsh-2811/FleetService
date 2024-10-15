@@ -58,7 +58,7 @@ class BreakJobView(ModelViewSet):
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         if not instance.started_at:
-            return Response({"Error":"Please Start this job before start or end break."})
+            return Response({"detail":"Please Start this job before start or end break."})
         today = datetime.datetime.now()
 
         break_type=self.request.data.get('break_type').lower()
@@ -68,7 +68,7 @@ class BreakJobView(ModelViewSet):
             instance.save()
         if break_type == 'end':
             if not instance.break_start:
-                return Response({"Error":"Please Start break for this job before end."})
+                return Response({"detail":"Please Start break for this job before end."})
             instance.job_status=Job.JobStatus.RUNNING
             instance.break_end=today
             instance.save()
@@ -79,18 +79,6 @@ class FinishJobView(ModelViewSet):
     serializer_class=FinishJobSerializer
     queryset=Job.objects.all()
     http_method_names=['patch']
-
-    def update(self, request, *args, **kwargs):
-        instance = self.get_object()
-        if not instance.started_at:
-            return Response({"Error":"Please Start this job before finished."})
-            
-        today = datetime.datetime.now()
-
-        instance.job_status=Job.JobStatus.FINISHED
-        instance.finished_at=today
-        instance.save()
-        return super().update(request, *args, **kwargs)
 
 class JobImageViewSet(ModelViewSet):
     permission_classes=[IsAuthenticated]
