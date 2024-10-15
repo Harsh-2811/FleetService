@@ -15,7 +15,7 @@ class SupportPersons(ListAPIView):
     queryset=SupportPerson.objects.all()
 
 
-class ContactUs(CreateAPIView):
+class ContactUsView(CreateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ContactUsSerializer
     queryset=ContactUs.objects.all()
