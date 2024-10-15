@@ -17,3 +17,14 @@ class JobFormAdmin(admin.ModelAdmin):
         return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 admin.site.register(JobFormField,JobFormAdmin)
+
+
+class SupportPersonAdmin(admin.ModelAdmin):
+    list_display = ('id','name', 'contact_number', 'email')
+
+admin.site.register(SupportPerson,SupportPersonAdmin)
+
+class ContactUsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'message', 'user')
+
+admin.site.register(ContactUs,ContactUsAdmin)

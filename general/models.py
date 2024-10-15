@@ -33,6 +33,8 @@ class SupportPerson(models.Model):
 class ContactUs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='contact_us')
     message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return self.name
