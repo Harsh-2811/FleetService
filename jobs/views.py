@@ -80,6 +80,12 @@ class FinishJobView(ModelViewSet):
     queryset=Job.objects.all()
     http_method_names=['patch']
 
+    def update(self, request, *args, **kwargs):
+        resp = super().update(request, *args, **kwargs)
+        return Response({
+            "detail": "Job finished successfully."
+        }, status=status.HTTP_200_OK)
+
 class JobImageViewSet(ModelViewSet):
     permission_classes=[IsAuthenticated]
     serializer_class = JobImageSerializer

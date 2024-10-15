@@ -2,10 +2,11 @@ from django.contrib import admin
 from .models import *
 from rangefilter.filters import (
     DateRangeFilterBuilder,
-    DateTimeRangeFilterBuilder,
-    NumericRangeFilterBuilder,
-    DateRangeQuickSelectListFilterBuilder,
 )
+
+class JobImageInline(admin.TabularInline):
+    model = JobImage
+    extra = 0
 
 # Register your models here.
 class JobAdmin(admin.ModelAdmin):
@@ -17,7 +18,7 @@ class JobAdmin(admin.ModelAdmin):
         'vehicle_plate_number',
     ]
     
-
+    inlines = [JobImageInline]
     def vehicle_plate_number(self, obj):
         return obj.vehicle.plate_number  # Access the vehicle's plate number field
     vehicle_plate_number.short_description = 'Vehicle Plate Number' 
