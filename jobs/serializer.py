@@ -120,7 +120,7 @@ class Base64ImageFieldSerializer(serializers.ImageField):
     
 class FinishJobSerializer(serializers.ModelSerializer):
     # permission_class = [IsAuthenticated]
-    images = serializers.ListField(child=Base64ImageFieldSerializer())
+    images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
 
     class Meta:
         model = Job
@@ -142,7 +142,7 @@ class FinishJobSerializer(serializers.ModelSerializer):
 
 
 class JobImageSerializer(serializers.ModelSerializer):
-    images = serializers.ListField(child=Base64ImageFieldSerializer())
+    images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
 
     class Meta:
         model = JobImage
