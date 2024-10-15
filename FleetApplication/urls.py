@@ -10,7 +10,7 @@ urlpatterns = [
     path('api/user/',include('user.urls')),
     path('api/fleet/',include('fleet.urls')),
 
-    path('api/general/form_fields/',include('general.urls')),
+    path('api/general/',include('general.urls')),
 
     path('api/job/',include('jobs.urls')),
 ]
