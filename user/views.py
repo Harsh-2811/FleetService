@@ -27,6 +27,7 @@ class LoginUser(GenericAPIView):
         return Response({
             'refresh': str(refresh),
             'access': str(refresh.access_token),
+            'user_id': user.id,
             'driver': {
                 "driver_id": driver.driver_id,
                 "license_number": driver.license_number,

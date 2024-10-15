@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework import status
 import datetime
 from django.utils import timezone
 from .serializer import *
@@ -97,29 +98,16 @@ class JobImageViewSet(ModelViewSet):
     http_method_names = ['post']
 
     def create(self, request, *args, **kwargs):
-        action_type = request.data.get('action_type')
-        images = request.FILES.getlist('images')
-
-        try:
-            job=request.data.get('job')
-        except Exception as e:
-            return Response({"error": "job_id is not provided."})
-
-        if not images:
-            return Response({"error": "No images provided."})
-
-        responses = []
-        for image in images:
-
-            data = {'job':job,'image': image, 'action_type': action_type}
-            serializer = self.get_serializer(data=data,context={'request': request})
-            if serializer.is_valid():
-                serializer.save()
-                responses.append(serializer.data)
-            else:
-                return Response(serializer.errors)
-
-        return Response(responses)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response({
+            "detail": "Image uploaded successfully."
+        }, status=status.HTTP_201_CREATED)
+    
+    def perform_create(self, serializer):
+        instance = serializer.save()
+        return instance
     
 
 class ActiveJobView(RetrieveAPIView):

@@ -129,52 +129,39 @@ class Base64ImageFieldSerializer(serializers.ImageField):
 
 
 class JobImageSerializer(serializers.ModelSerializer):
-    image = Base64ImageFieldSerializer()
+    images = serializers.ListField(child=Base64ImageFieldSerializer())
 
     class Meta:
         model = JobImage
-        fields = ["job", "image", "action_type"]
+        fields = ["job", "images", "action_type"]
 
     def validate(self, attrs):
-        request = self.context.get("request")
         action_type = attrs.get("action_type")
-        job = request.data.get("job")
-        try:
-            images = JobImage.objects.filter(job=job, action_type=action_type)
-            if action_type == JobImage.ActionType.arrive_job and len(images) == 4:
-                raise serializers.ValidationError(
-                    "Images for Arrive Job  is already exists."
-                )
-
-            if action_type == JobImage.ActionType.arrive_site and len(images) == 5:
-                raise serializers.ValidationError(
-                    "Images for Arrive Site  is already exists."
-                )
-
-        except Exception as e:
-            raise serializers.ValidationError(
-                f"Images are already exists for {action_type}"
-            )
-
-        images = request.FILES.getlist("images")
-        if action_type == JobImage.ActionType.arrive_job and len(images) > 4:
-            raise serializers.ValidationError(
-                "You can upload a maximum of 4 images for Arrive Job."
-            )
-
-        if action_type == JobImage.ActionType.arrive_site and len(images) > 5:
-            raise serializers.ValidationError(
-                "You can upload a maximum of 5 images for Arrive Site."
-            )
+        images = attrs.get("images")
 
         if action_type == JobImage.ActionType.arrive_job and len(images) < 4:
             raise serializers.ValidationError(
-                "You have to upload 4 images for Arrive Job."
+                {
+                    "detail": "You have to upload minimum 4 images for Arrive Job."
+                }
             )
 
         if action_type == JobImage.ActionType.arrive_site and len(images) < 5:
             raise serializers.ValidationError(
-                "You have to upload 5 images for Arrive Site."
+                {
+                    "detail": "You have to upload minimum 5 images for Arrive Site."
+                }
             )
 
         return attrs
+
+
+    def create(self, validated_data):
+        images = validated_data.pop("images")
+        job = validated_data.get("job")
+        action_type = validated_data.get("action_type")
+
+        for image in images:
+            JobImage.objects.create(job=job, image=image, action_type=action_type)
+
+        return job

@@ -13,3 +13,14 @@ class JobFormFieldSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobFormField
         fields = ['id','field_name', 'field_type', 'select_options']
+
+
+class SupportPersonSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SupportPerson
+        fields = ['id','name', 'contact_number', 'email']
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
+        fields = ['id', 'message']
