@@ -63,3 +63,13 @@ class JobImageAdmin(admin.ModelAdmin):
     ]
 
 admin.site.register(JobImage,JobImageAdmin)
+
+class PrefillChecksAdmin(admin.ModelAdmin):
+    list_display=[
+        'id',
+        'driver',
+        'form_field',
+        'value',
+    ]
+
+admin.site.register(PrefillChecks, PrefillChecksAdmin)
