@@ -68,8 +68,9 @@ class PrefillChecksAdmin(admin.ModelAdmin):
     list_display=[
         'id',
         'driver',
-        'form_field',
+        'field',
         'value',
+        'created_at',
     ]
 
 admin.site.register(PrefillChecks, PrefillChecksAdmin)
