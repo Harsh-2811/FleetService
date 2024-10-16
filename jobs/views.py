@@ -128,7 +128,7 @@ class PrefillChecksView(CreateAPIView):
         if not Driver.objects.filter(user=self.request.user).exists():
             raise NotFound("Driver not found.")
         date = timezone.now().date()
-        driver = self.request.user.driver
+        driver = Driver.objects.get(user=self.request.user)
         serializer.save(date=date, driver=driver)
 
 class IsPrefillCheckedView(GenericAPIView):

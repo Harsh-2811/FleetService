@@ -8,7 +8,7 @@ def generate_driver_id():
     return str(random.randint(1000000000, 9999999999))
 
 class Driver(models.Model):
-    user=models.OneToOneField(User, on_delete=models.CASCADE,related_name='user')
+    user=models.OneToOneField(User, on_delete=models.CASCADE,related_name='driver')
     driver_id = models.CharField(max_length=10, unique=True,default=generate_driver_id, editable=False)
     license_number=models.CharField(max_length=12)
     contact_number=models.CharField(max_length=12,null=True,blank=True)
