@@ -147,6 +147,10 @@ class StartJobView(GenericAPIView):
         return self.queryset.filter(driver__user=self.request.user)    
     
     def post(self, request, *args, **kwargs):
+        if not PrefillChecks.objects.filter(driver__user=request.user, date=timezone.now().date()).exists():
+            return Response({
+                "detail": "Please fill the checks before starting the job."
+            }, status=status.HTTP_400_BAD_REQUEST)
         job = self.get_object()
         job.job_status = Job.JobStatus.RUNNING
         job.started_at = timezone.now()
