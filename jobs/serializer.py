@@ -201,3 +201,5 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
 
         return validated_data
         
+class StartJobV2Serializer(serializers.Serializer):
+    job = serializers.IntegerField()

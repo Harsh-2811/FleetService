@@ -131,12 +131,21 @@ class PrefillChecksView(CreateAPIView):
         driver = self.request.user.driver
         serializer.save(date=date, driver=driver)
 
+class IsPrefillCheckedView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return Response({
+            "is_checked": PrefillChecks.objects.filter(driver__user=request.user, date=timezone.now().date()).exists()
+        })
+    
 class StartJobView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = StartJobV2Serializer
     queryset = Job.objects.all()
 
-    def get_object(self):
-        id = self.kwargs.get("id")
+    def get_object(self, job_id):
+        id = job_id
         try:
             job = Job.objects.get(id=id)
             return job
@@ -147,11 +156,14 @@ class StartJobView(GenericAPIView):
         return self.queryset.filter(driver__user=self.request.user)    
     
     def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
         if not PrefillChecks.objects.filter(driver__user=request.user, date=timezone.now().date()).exists():
             return Response({
                 "detail": "Please fill the checks before starting the job."
             }, status=status.HTTP_400_BAD_REQUEST)
-        job = self.get_object()
+        job = self.get_object(validated_data['job'])
         job.job_status = Job.JobStatus.RUNNING
         job.started_at = timezone.now()
         job.save()
