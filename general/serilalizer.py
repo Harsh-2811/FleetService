@@ -12,7 +12,7 @@ class JobFormFieldSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = JobFormField
-        fields = ['id','field_name', 'field_type', 'select_options']
+        fields = ['id','field_name', 'use_case', 'field_type', 'select_options']
 
 
 class SupportPersonSerializer(serializers.ModelSerializer):

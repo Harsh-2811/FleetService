@@ -9,8 +9,14 @@ class JobFormField(models.Model):
         boolean="Boolean","Boolean"
         select="Select","Select"
     
+    class UseCases(models.TextChoices):
+        start_day = "Start Day", "Start Day"
+        finish_job = "Finish Job", "Finish Job"
+        finish_day = "Finish Day", "Finish Day"
+
     field_name = models.CharField(max_length=100)
     field_type = models.CharField(max_length=50,choices=FieldsTypes.choices)
+    use_case = models.CharField(max_length=50,choices=UseCases.choices, default=UseCases.start_day)
 
     def __str__(self):
         return self.field_name
