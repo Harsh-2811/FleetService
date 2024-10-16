@@ -124,11 +124,20 @@ class PrefillChecksView(CreateAPIView):
     serializer_class = PrefillChecksSerializer
     permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response({
+            "detail": "Prefill checks saved successfully."
+        }, status=status.HTTP_201_CREATED)
+    
     def perform_create(self, serializer):
         if not Driver.objects.filter(user=self.request.user).exists():
             raise NotFound("Driver not found.")
         date = timezone.now().date()
-        driver = self.request.user.driver
+        driver = Driver.objects.get(user=self.request.user)
         serializer.save(date=date, driver=driver)
 
 class IsPrefillCheckedView(GenericAPIView):
