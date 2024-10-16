@@ -9,7 +9,7 @@ from jobs.models import *
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import *
-from rest_framework.generics import RetrieveAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView
 from rest_framework.status import HTTP_200_OK
 from rest_framework.exceptions import NotFound
 
@@ -119,3 +119,38 @@ class ActiveJobView(RetrieveAPIView):
             return job
         except Job.DoesNotExist:
             raise NotFound("No active job found for today.")
+        
+class PrefillChecksView(CreateAPIView):
+    serializer_class = PrefillChecksSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        if not Driver.objects.filter(user=self.request.user).exists():
+            raise NotFound("Driver not found.")
+        date = timezone.now().date()
+        driver = self.request.user.driver
+        serializer.save(date=date, driver=driver)
+
+class StartJobView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Job.objects.all()
+
+    def get_object(self):
+        id = self.kwargs.get("id")
+        try:
+            job = Job.objects.get(id=id)
+            return job
+        except Job.DoesNotExist:
+            raise NotFound("Job not found.")
+        
+    def get_queryset(self):
+        return self.queryset.filter(driver__user=self.request.user)    
+    
+    def post(self, request, *args, **kwargs):
+        job = self.get_object()
+        job.job_status = Job.JobStatus.RUNNING
+        job.started_at = timezone.now()
+        job.save()
+        return Response({
+            "detail": "Job started successfully."
+        }, status=status.HTTP_200_OK)

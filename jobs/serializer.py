@@ -9,8 +9,6 @@ from django.utils import timezone
 
 
 class JobInfoFieldsSerializer(serializers.ModelSerializer):
-    permission_class = [IsAuthenticated]
-
     class Meta:
         model = JobInfo
         fields = ["form_field", "value"]
@@ -178,3 +176,28 @@ class JobImageSerializer(serializers.ModelSerializer):
             JobImage.objects.create(job=job, image=image, action_type=action_type)
 
         return job
+    
+class PrefillChecksFieldsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PrefillChecks
+        fields = ["field", "value"]
+    
+class PrefillChecksSerializer(serializers.ModelSerializer):
+    form_fields = PrefillChecksFieldsSerializer(many=True)
+    class Meta:
+        model = PrefillChecks
+        fields = ["form_fields"]
+
+    def create(self, validated_data):
+        form_fields = validated_data.pop("form_fields")
+        driver = validated_data.get("driver")
+        date = validated_data.get("date")
+        for form_field in form_fields:
+            PrefillChecks.objects.create(
+                driver=driver,
+                date=date,
+                **form_field
+            )
+
+        return validated_data
+        

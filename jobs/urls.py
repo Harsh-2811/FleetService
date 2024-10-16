@@ -26,4 +26,6 @@ urlpatterns=[
     path('',include(router_job_finish.urls),name='job_finish'),
     path('',include(router_job_image.urls),name='job_images'),
     path("active_job/",views.ActiveJobView.as_view(),name="active_job"),
+    path("prefill_checks/",views.PrefillChecksView.as_view(),name="prefill_checks"),
+    path("start_job/v2/<int:id>/",views.StartJobView.as_view(),name="start_job_v2"),
 ]

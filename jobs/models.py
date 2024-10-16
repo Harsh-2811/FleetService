@@ -85,3 +85,14 @@ class JobImage(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class PrefillChecks(models.Model):
+    date = models.DateField()
+    field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='prefill_checks')
+    value = models.CharField(max_length=255)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='prefill_checks')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.driver.user.first_name} - {self.field.field_name} - {self.value} on {self.date}"
