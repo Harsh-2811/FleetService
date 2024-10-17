@@ -191,7 +191,7 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
     precheck_images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
     class Meta:
         model = PrefillChecks
-        fields = ["form_fields", "check_type"]
+        fields = ["form_fields", "check_type", "precheck_images"]
 
     def create(self, validated_data):
         form_fields = validated_data.pop("form_fields")
