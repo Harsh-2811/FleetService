@@ -22,11 +22,11 @@ admin.site.register(JobFormField,JobFormAdmin)
 
 
 class SupportPersonAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'contact_number', 'email')
+    list_display = ('name', 'contact_number', 'email')
 
 admin.site.register(SupportPerson,SupportPersonAdmin)
 
 class ContactUsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'message', 'user')
+    list_display = ('user', 'message')
 
 admin.site.register(ContactUs,ContactUsAdmin)

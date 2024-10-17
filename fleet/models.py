@@ -21,7 +21,7 @@ class Driver(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return self.user.first_name
+        return self.user.username
     
 class Vehicle(models.Model):
     class VehicleTypes(models.TextChoices):

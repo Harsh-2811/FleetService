@@ -119,10 +119,12 @@ class Base64ImageFieldSerializer(serializers.ImageField):
 class FinishJobSerializer(serializers.ModelSerializer):
     # permission_class = [IsAuthenticated]
     images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
-    form_fields = JobInfoFieldsSerializer(many=True)
+    form_fields = JobInfoFieldsSerializer(many=True, write_only=True)
+    signature = Base64ImageFieldSerializer(write_only=True)
+
     class Meta:
         model = Job
-        fields = ["images", "finish_reason", "form_fields"]
+        fields = ["images", "finish_reason", "form_fields", "signature"]
 
     def update(self, instance, validated_data):
         images = validated_data.pop("images")

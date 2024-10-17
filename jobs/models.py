@@ -33,6 +33,7 @@ class Job(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    signature = models.ImageField(upload_to='signatures/', null=True, blank=True)
     def set_duration_from_string(self, duration_str):
         # Example: "1 hr 2 min" -> timedelta(hours=1, minutes=2)
         hours, minutes = 0, 0

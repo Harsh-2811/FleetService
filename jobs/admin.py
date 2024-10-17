@@ -3,25 +3,49 @@ from .models import *
 from rangefilter.filters import (
     DateRangeFilterBuilder,
 )
+from django.utils.html import format_html
 
 class JobImageInline(admin.TabularInline):
     model = JobImage
     extra = 0
+    fields = ['image', 'output_image'] 
+    readonly_fields = ['output_image']    
+
+    def output_image(self, obj):
+        if obj.image:
+            return format_html('<img src="{}" width="100">'.format(obj.image.url))
+        return "No Image" 
+
+class JobInfoInline(admin.TabularInline):
+    model = JobInfo
+    extra = 0
+    fields = ['form_field', 'value', 'use_case']
+    readonly_fields = ['use_case']  
+
+    def use_case(self, obj):
+        return obj.form_field.get_use_case_display()  
 
 # Register your models here.
 class JobAdmin(admin.ModelAdmin):
     list_display=[
-        'id',
         'driver',
         'job_title',
         'job_status',
         'vehicle_plate_number',
     ]
     
-    inlines = [JobImageInline]
+    inlines = [JobImageInline, JobInfoInline]
     def vehicle_plate_number(self, obj):
         return obj.vehicle.plate_number  # Access the vehicle's plate number field
     vehicle_plate_number.short_description = 'Vehicle Plate Number' 
+
+    def signature_thumbnail(self, obj):
+        if obj.signature:
+            return format_html('<img src="{}" width="150" style="border-radius: 5px;" />'.format(obj.signature.url))
+        return "No Signature"
+    signature_thumbnail.short_description = 'Signature'
+
+    readonly_fields = ['signature_thumbnail']
     
     list_filter=[
         'driver',
@@ -48,7 +72,6 @@ admin.site.register(Job,JobAdmin)
 
 class JobInfoAdmin(admin.ModelAdmin):
     list_display=[
-        'id',
         'job',
         'form_field',
         'value',
@@ -66,7 +89,6 @@ admin.site.register(JobImage,JobImageAdmin)
 
 class PrefillChecksAdmin(admin.ModelAdmin):
     list_display=[
-        'id',
         'driver',
         'field',
         'value',
