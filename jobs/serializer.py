@@ -30,7 +30,7 @@ class JobInfoManySerializer(serializers.ModelSerializer):
         job = validated_data.get("job")
 
         for form_field in form_fields:
-            JobInfo.objects.create(job=job, **form_field)
+            JobInfo.objects.create(job=job, form_field=form_field["form_field"], value=form_field["value"])
         
         job.job_status = Job.JobStatus.RUNNING
         job.started_at = timezone.now()
@@ -119,7 +119,7 @@ class Base64ImageFieldSerializer(serializers.ImageField):
 class FinishJobSerializer(serializers.ModelSerializer):
     # permission_class = [IsAuthenticated]
     images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
-
+    form_fields = JobInfoFieldsSerializer(many=True)
     class Meta:
         model = Job
         fields = ["images", "finish_reason"]
@@ -127,9 +127,13 @@ class FinishJobSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         images = validated_data.pop("images")
         finish_reason = validated_data.get("finish_reason")
+        form_fields = validated_data.pop("form_fields")
 
         for image in images:
             JobImage.objects.create(job=instance, image=image, action_type=JobImage.ActionType.finish_job)
+
+        for form_field in form_fields:
+            JobInfo.objects.create(job=instance, **form_field)
 
         instance.job_status = Job.JobStatus.FINISHED
         instance.finished_at = timezone.now()
@@ -184,21 +188,24 @@ class PrefillChecksFieldsSerializer(serializers.ModelSerializer):
     
 class PrefillChecksSerializer(serializers.ModelSerializer):
     form_fields = PrefillChecksFieldsSerializer(many=True)
+    precheck_images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
     class Meta:
         model = PrefillChecks
-        fields = ["form_fields"]
+        fields = ["form_fields", "check_type"]
 
     def create(self, validated_data):
         form_fields = validated_data.pop("form_fields")
         driver = validated_data.get("driver")
         date = validated_data.get("date")
+        precheck_images = validated_data.pop("precheck_images")
         for form_field in form_fields:
             PrefillChecks.objects.create(
                 driver=driver,
                 date=date,
                 **form_field
             )
-
+        for image in precheck_images:
+            PrecheckImages.objects.create(driver=driver, date=date, image=image)
         return validated_data
         
 class StartJobV2Serializer(serializers.Serializer):

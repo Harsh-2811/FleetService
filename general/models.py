@@ -10,9 +10,9 @@ class JobFormField(models.Model):
         select="Select","Select"
     
     class UseCases(models.TextChoices):
-        start_day = "Start Day", "Start Day"
-        finish_job = "Finish Job", "Finish Job"
-        finish_day = "Finish Day", "Finish Day"
+        start_day = "start_day", "Start Day"
+        finish_job = "finish_job", "Finish Job"
+        finish_day = "finish_day", "Finish Day"
 
     field_name = models.CharField(max_length=100)
     field_type = models.CharField(max_length=50,choices=FieldsTypes.choices)

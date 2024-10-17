@@ -87,8 +87,13 @@ class JobImage(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 class PrefillChecks(models.Model):
+    class ChecksTypes(models.TextChoices):
+        start_day = "start_day", "Start Day"
+        finish_day = "finish_day", "Finish Day"
+
     date = models.DateField()
     field = models.ForeignKey(JobFormField, on_delete=models.CASCADE, related_name='prefill_checks')
+    check_type = models.CharField(max_length=50,choices=ChecksTypes.choices, default=ChecksTypes.start_day)
     value = models.CharField(max_length=255)
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='prefill_checks')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -96,3 +101,13 @@ class PrefillChecks(models.Model):
 
     def __str__(self):
         return f"{self.driver.user.first_name} - {self.field.field_name} - {self.value} on {self.date}"
+    
+class PrecheckImages(models.Model):
+    date = models.DateField()
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='day_images')
+    image=models.ImageField(upload_to='images/',null=True,blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.driver.user.first_name} - {self.date}"
