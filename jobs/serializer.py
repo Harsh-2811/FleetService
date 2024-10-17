@@ -186,7 +186,7 @@ class PrefillChecksFieldsSerializer(serializers.ModelSerializer):
         model = PrefillChecks
         fields = ["field", "value"]
 
-class ImageSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.Serializer):
     image = serializers.ImageField()
     
 class PrefillChecksSerializer(serializers.ModelSerializer):
@@ -208,7 +208,7 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
                 **form_field
             )
         for image in precheck_images:
-            PrecheckImages.objects.create(driver=driver, date=date, image=image)
+            PrecheckImages.objects.create(driver=driver, date=date, image=image['image'])
         return validated_data
         
 class StartJobV2Serializer(serializers.Serializer):
