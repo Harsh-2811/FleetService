@@ -125,7 +125,7 @@ class ActiveJobView(RetrieveAPIView):
 class PrefillChecksView(CreateAPIView):
     serializer_class = PrefillChecksSerializer
     permission_classes = [IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
