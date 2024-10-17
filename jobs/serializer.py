@@ -188,7 +188,7 @@ class PrefillChecksFieldsSerializer(serializers.ModelSerializer):
     
 class PrefillChecksSerializer(serializers.ModelSerializer):
     form_fields = PrefillChecksFieldsSerializer(many=True)
-    precheck_images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
+    precheck_images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True, required=False)
     class Meta:
         model = PrefillChecks
         fields = ["form_fields", "check_type", "precheck_images"]
@@ -197,7 +197,7 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
         form_fields = validated_data.pop("form_fields")
         driver = validated_data.get("driver")
         date = validated_data.get("date")
-        precheck_images = validated_data.pop("precheck_images")
+        precheck_images = validated_data.pop("precheck_images", [])
         for form_field in form_fields:
             PrefillChecks.objects.create(
                 driver=driver,
