@@ -11,6 +11,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from .filters import *
 from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView
 from rest_framework.status import HTTP_200_OK
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.exceptions import NotFound
 
 class JobsView(ModelViewSet):
@@ -143,9 +144,15 @@ class PrefillChecksView(CreateAPIView):
 class IsPrefillCheckedView(GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+            parameters=[
+                OpenApiParameter(name="check_type", type=str, location=OpenApiParameter.QUERY, required=True)
+            ]
+    )
     def get(self, request, *args, **kwargs):
+        check_type = request.query_params.get("check_type", "start_day")
         return Response({
-            "is_checked": PrefillChecks.objects.filter(driver__user=request.user, date=timezone.now().date()).exists()
+            "is_checked": PrefillChecks.objects.filter(driver__user=request.user, date=timezone.now().date(), check_type=check_type).exists()
         })
     
 class StartJobView(GenericAPIView):
