@@ -188,7 +188,7 @@ class PrefillChecksFieldsSerializer(serializers.ModelSerializer):
     
 class PrefillChecksSerializer(serializers.ModelSerializer):
     form_fields = PrefillChecksFieldsSerializer(many=True)
-    precheck_images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True, required=False)
+    precheck_images = serializers.ListField(child=serializers.ImageField(), write_only=True, required=False)
     class Meta:
         model = PrefillChecks
         fields = ["form_fields", "check_type", "precheck_images"]
