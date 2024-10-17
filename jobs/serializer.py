@@ -207,6 +207,7 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
             PrefillChecks.objects.create(
                 driver=driver,
                 date=date,
+                check_type = validated_data.get("check_type"),
                 **form_field
             )
         for image in precheck_images:
