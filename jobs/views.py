@@ -13,6 +13,7 @@ from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIVi
 from rest_framework.status import HTTP_200_OK
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import MultiPartParser, FormParser
 
 class JobsView(ModelViewSet):
     permission_classes=[IsAuthenticated]
@@ -124,6 +125,7 @@ class ActiveJobView(RetrieveAPIView):
 class PrefillChecksView(CreateAPIView):
     serializer_class = PrefillChecksSerializer
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser]
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
