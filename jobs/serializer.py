@@ -122,7 +122,7 @@ class FinishJobSerializer(serializers.ModelSerializer):
     form_fields = JobInfoFieldsSerializer(many=True)
     class Meta:
         model = Job
-        fields = ["images", "finish_reason"]
+        fields = ["images", "finish_reason", "form_fields"]
 
     def update(self, instance, validated_data):
         images = validated_data.pop("images")
