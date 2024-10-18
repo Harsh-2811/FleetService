@@ -33,6 +33,15 @@ class JobAdmin(admin.ModelAdmin):
         'job_status',
         'vehicle_plate_number',
     ]
+    readonly_fields = [
+        'started_at',
+        'break_start',
+        'break_end',
+        'finished_at',
+        'finish_reason',
+        'signature',
+        
+    ]
     
     inlines = [JobImageInline, JobInfoInline]
     def vehicle_plate_number(self, obj):
