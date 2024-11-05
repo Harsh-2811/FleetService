@@ -103,8 +103,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fleet_service',
-        'USER': 'fleet_service',
-        'PASSWORD': 'fleet_service_UMz4cgLzGAJ7q6h',
+        'USER': 'postgres',
+        'PASSWORD': 'Harsh@2811',
         'HOST': 'localhost',
         'PORT': '5432'
     }
