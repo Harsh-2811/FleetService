@@ -105,7 +105,7 @@ DATABASES = {
         'NAME': 'fleet_service',
         'USER': 'fleet_service',
         'PASSWORD': 'fleet_service_UMz4cgLzGAJ7q6h',
-        'HOST': 'localhost',
+        'HOST': '209.38.29.145',
         'PORT': '5432'
     }
 }
