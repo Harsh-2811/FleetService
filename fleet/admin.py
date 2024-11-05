@@ -19,8 +19,8 @@ admin.site.register(Driver,DriverAdmin)
 
 class VehicleAdmin(admin.ModelAdmin):
     list_display=[
-        'vehicle_name',
         'plate_number',
+        'vehicle_name',
         'vehicle_type',
     ]
 
