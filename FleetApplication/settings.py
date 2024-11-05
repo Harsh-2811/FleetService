@@ -99,17 +99,28 @@ WSGI_APPLICATION = 'FleetApplication.wsgi.application'
 #     }
 # }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'fleet_service',
+#         'USER': 'fleet_service',
+#         'PASSWORD': 'fleet_service_UMz4cgLzGAJ7q6h',
+#         'HOST': 'localhost',
+#         'PORT': '5432'
+#     }
+# }
+
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fleet_service',
         'USER': 'fleet_service',
         'PASSWORD': 'fleet_service_UMz4cgLzGAJ7q6h',
-        'HOST': 'localhost',
+        'HOST': '209.38.29.145',
         'PORT': '5432'
     }
 }
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
