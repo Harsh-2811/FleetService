@@ -103,6 +103,9 @@ class PrefillChecks(models.Model):
     def __str__(self):
         return f"{self.driver.user.first_name} - {self.field.field_name} - {self.value} on {self.date}"
     
+    class Meta:
+        verbose_name_plural = "Prefill Checks"
+    
 class PrecheckImages(models.Model):
     date = models.DateField()
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE, related_name='day_images')

@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import *
 from django.utils.html import format_html
+from import_export.admin import ImportExportModelAdmin
 
 # Register your models here.
 
@@ -19,7 +20,7 @@ class SelectOptionInline(admin.TabularInline):
     model = SelectOption
     extra = 1
 
-class JobFormAdmin(admin.ModelAdmin):
+class JobFormAdmin(ImportExportModelAdmin):
     list_display = ('id','field_name', 'field_type', 'use_case')
     list_editable = ('field_name', 'field_type', 'use_case')
 
@@ -33,7 +34,7 @@ class JobFormAdmin(admin.ModelAdmin):
 admin.site.register(JobFormField,JobFormAdmin)
 
 
-class SupportPersonAdmin(admin.ModelAdmin):
+class SupportPersonAdmin(ImportExportModelAdmin):
     list_display = ('name', 'contact_number', 'email')
 
     def profile_picture_thumbnail(self, obj):
