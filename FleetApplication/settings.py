@@ -104,7 +104,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'fleet_service',
         'USER': 'fleet_service',
-        'PASSWORD': 'Harsh@2811',
+        'PASSWORD': 'fleet_service_UMz4cgLzGAJ7q6h',
         'HOST': 'localhost',
         'PORT': '5432'
     }
