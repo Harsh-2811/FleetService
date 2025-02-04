@@ -156,19 +156,19 @@ class JobImageSerializer(serializers.ModelSerializer):
         action_type = attrs.get("action_type")
         images = attrs.get("images")
 
-        if action_type == JobImage.ActionType.arrive_job and len(images) < 4:
-            raise serializers.ValidationError(
-                {
-                    "detail": "You have to upload minimum 4 images for Arrive Job."
-                }
-            )
+        # if action_type == JobImage.ActionType.arrive_job and len(images) < 4:
+        #     raise serializers.ValidationError(
+        #         {
+        #             "detail": "You have to upload minimum 4 images for Arrive Job."
+        #         }
+        #     )
 
-        if action_type == JobImage.ActionType.arrive_site and len(images) < 5:
-            raise serializers.ValidationError(
-                {
-                    "detail": "You have to upload minimum 5 images for Arrive Site."
-                }
-            )
+        # if action_type == JobImage.ActionType.arrive_site and len(images) < 5:
+        #     raise serializers.ValidationError(
+        #         {
+        #             "detail": "You have to upload minimum 5 images for Arrive Site."
+        #         }
+        #     )
 
         return attrs
 
