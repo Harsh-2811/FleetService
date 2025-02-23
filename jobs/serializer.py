@@ -7,7 +7,22 @@ from django.core.files.base import ContentFile
 from fleet.serializer import *
 from django.utils import timezone
 
+class Base64FileField(serializers.FileField):
+    def to_internal_value(self, data):
+        # Check if the image is base64-encoded
+        if isinstance(data, str) and data.startswith("data:application/pdf"):
+            # Decoding base64-encoded image
+            format, imgstr = data.split(
+                ";base64,"
+            )  # Split the format from the base64 content
+            ext = format.split("/")[
+                -1
+            ]  # Extract the file extension (e.g., 'jpeg', 'png')
+            # Create a ContentFile from the base64 string
+            data = ContentFile(base64.b64decode(imgstr), name=f"temp.{ext}")
 
+        return super().to_internal_value(data)
+    
 class JobInfoFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobInfo
@@ -15,13 +30,14 @@ class JobInfoFieldsSerializer(serializers.ModelSerializer):
 
 class JobInfoManySerializer(serializers.ModelSerializer):
     form_fields = JobInfoFieldsSerializer(many=True)
-
+    filled_pdf = Base64FileField(write_only=True, required=False)
     class Meta:
         model = JobInfo
-        fields = ["job", "form_fields"]
+        fields = ["job", "form_fields", "filled_pdf"]
 
     def create(self, validated_data):
         user = self.context["request"].user
+        filled_pdf = validated_data['filled_pdf']
         if Job.objects.filter(driver__user=user, job_status__in=[Job.JobStatus.RUNNING, Job.JobStatus.BREAK], job_date=timezone.now().date()).exists():
             raise serializers.ValidationError({
                 "detail": "You already have a job running or on break for today."
@@ -33,6 +49,7 @@ class JobInfoManySerializer(serializers.ModelSerializer):
             JobInfo.objects.create(job=job, form_field=form_field["form_field"], value=form_field["value"])
         
         job.job_status = Job.JobStatus.RUNNING
+        job.filled_pdf = filled_pdf
         job.started_at = timezone.now()
         job.save()
 
@@ -116,39 +133,24 @@ class Base64ImageFieldSerializer(serializers.ImageField):
 
         return super().to_internal_value(data)
     
-class Base64FileField(serializers.FileField):
-    def to_internal_value(self, data):
-        # Check if the image is base64-encoded
-        if isinstance(data, str) and data.startswith("data:application/pdf"):
-            # Decoding base64-encoded image
-            format, imgstr = data.split(
-                ";base64,"
-            )  # Split the format from the base64 content
-            ext = format.split("/")[
-                -1
-            ]  # Extract the file extension (e.g., 'jpeg', 'png')
-            # Create a ContentFile from the base64 string
-            data = ContentFile(base64.b64decode(imgstr), name=f"temp.{ext}")
-
-        return super().to_internal_value(data)
     
 class FinishJobSerializer(serializers.ModelSerializer):
     # permission_class = [IsAuthenticated]
-    images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
+    # images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
     form_fields = JobInfoFieldsSerializer(many=True, write_only=True)
     signature = Base64ImageFieldSerializer(write_only=True)
 
     class Meta:
         model = Job
-        fields = ["images", "finish_reason", "form_fields", "signature"]
+        fields = ["finish_reason", "form_fields", "signature"]
 
     def update(self, instance, validated_data):
-        images = validated_data.pop("images")
+        # images = validated_data.pop("images")
         finish_reason = validated_data.get("finish_reason")
         form_fields = validated_data.pop("form_fields")
 
-        for image in images:
-            JobImage.objects.create(job=instance, image=image, action_type=JobImage.ActionType.finish_job)
+        # for image in images:
+        #     JobImage.objects.create(job=instance, image=image, action_type=JobImage.ActionType.finish_job)
 
         for form_field in form_fields:
             JobInfo.objects.create(job=instance, **form_field)
