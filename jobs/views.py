@@ -9,7 +9,7 @@ from jobs.models import *
 from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import *
-from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, GenericAPIView, UpdateAPIView
 from rest_framework.status import HTTP_200_OK
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.exceptions import NotFound
@@ -188,3 +188,27 @@ class StartJobView(GenericAPIView):
         return Response({
             "detail": "Job started successfully."
         }, status=status.HTTP_200_OK)
+
+
+class isPDFFilled(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request, job_id):
+        try:
+            job = Job.objects.get(id = job_id)
+        except Job.DoesNotExist:
+            return Response({
+                "detail": "Job not exists"
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            "pdf_filled": True if job.filled_pdf else False
+        })
+
+
+class FillPDF(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UploadPdfSerializer
+    queryset = Job.objects.all()
+    http_method_names = ['PATCH']
+    

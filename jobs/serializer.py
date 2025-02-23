@@ -216,3 +216,9 @@ class PrefillChecksSerializer(serializers.ModelSerializer):
         
 class StartJobV2Serializer(serializers.Serializer):
     job = serializers.IntegerField()
+
+class UploadPdfSerializer(serializers.ModelSerializer):
+    filled_pdf = Base64ImageFieldSerializer(write_only=True)
+    class Meta:
+        model = Job
+        fields = ['filled_pdf']
