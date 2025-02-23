@@ -116,6 +116,22 @@ class Base64ImageFieldSerializer(serializers.ImageField):
 
         return super().to_internal_value(data)
     
+class Base64FileField(serializers.FileField):
+    def to_internal_value(self, data):
+        # Check if the image is base64-encoded
+        if isinstance(data, str) and data.startswith("data:application/pdf"):
+            # Decoding base64-encoded image
+            format, imgstr = data.split(
+                ";base64,"
+            )  # Split the format from the base64 content
+            ext = format.split("/")[
+                -1
+            ]  # Extract the file extension (e.g., 'jpeg', 'png')
+            # Create a ContentFile from the base64 string
+            data = ContentFile(base64.b64decode(imgstr), name=f"temp.{ext}")
+
+        return super().to_internal_value(data)
+    
 class FinishJobSerializer(serializers.ModelSerializer):
     # permission_class = [IsAuthenticated]
     images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
@@ -218,7 +234,7 @@ class StartJobV2Serializer(serializers.Serializer):
     job = serializers.IntegerField()
 
 class UploadPdfSerializer(serializers.ModelSerializer):
-    filled_pdf = Base64ImageFieldSerializer(write_only=True)
+    filled_pdf = Base64FileField(write_only=True)
     class Meta:
         model = Job
         fields = ['filled_pdf']
