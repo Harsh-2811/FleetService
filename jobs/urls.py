@@ -30,5 +30,5 @@ urlpatterns=[
     path("is_prefill_checked/",views.IsPrefillCheckedView.as_view(),name="is_prefill_checked"),
     path("start_job/v2/",views.StartJobView.as_view(),name="start_job_v2"),
     path("is_pdf_filled/<int:job_id>/", views.isPDFFilled.as_view(), name="is_pdf_filled"),
-    path("fill_pdf/<int:id>/", views.FillPDF.as_view(), name="fill_pdf")
+    path("fill_pdf/<int:pk>/", views.FillPDF.as_view(), name="fill_pdf")
 ]
