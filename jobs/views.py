@@ -210,5 +210,5 @@ class FillPDF(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UploadPdfSerializer
     queryset = Job.objects.all()
-    http_method_names = ['PATCH']
+    http_method_names = ['patch']
     
