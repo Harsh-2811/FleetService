@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from .serilalizer import *
 from .models import *
 from .filters import JobFormFieldFilter
+from django.shortcuts import render
 
 # Create your views here.
 class FormFields(ListAPIView):
@@ -24,3 +25,7 @@ class ContactUsView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+def privacy_policy(request):
+    return render("privacy_policy.html")
