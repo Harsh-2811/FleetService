@@ -28,4 +28,4 @@ class ContactUsView(CreateAPIView):
 
 
 def privacy_policy(request):
-    return render("privacy_policy.html")
+    return render(request, "privacy_policy.html")

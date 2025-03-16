@@ -22,7 +22,7 @@ urlpatterns += [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 
     path('api/schema/swagger-ui/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path("privacy_policy", privacy_policy)
+    path("privacy_policy/", privacy_policy, name="privacy_policy"),
 ]
 
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
