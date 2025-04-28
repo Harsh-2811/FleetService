@@ -15,13 +15,20 @@ from django.urls import reverse
 class JobImageInline(admin.TabularInline):
     model = JobImage
     extra = 0
-    fields = ['image', 'output_image'] 
-    readonly_fields = ['output_image']    
+    fields = ['image', 'output_image', 'download_image'] 
+    readonly_fields = ['output_image', 'download_image']    
 
     def output_image(self, obj):
         if obj.image:
             return format_html('<img src="{}" width="100">'.format(obj.image.url))
         return "No Image" 
+    
+    def download_image(self, obj):
+        if obj.image:
+            return format_html(
+                f'<a class="button" href="{obj.image.url}" download style="color:#fff">Download</a>',
+            )
+        return "No Image"
 
 class JobInfoInline(admin.TabularInline):
     model = JobInfo
