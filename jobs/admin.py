@@ -1,9 +1,16 @@
+import io
+import os
+import zipfile
+from django.urls import path
+from django.http import HttpResponse
 from django.contrib import admin
 from .models import *
 from rangefilter.filters import (
     DateRangeFilterBuilder,
 )
 from django.utils.html import format_html
+from django.urls import reverse
+
 
 class JobImageInline(admin.TabularInline):
     model = JobImage
@@ -76,6 +83,42 @@ class JobAdmin(admin.ModelAdmin):
         'driver__user__first_name',
         'driver__user__last_name',
     ]
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path(
+                'download-images/<int:job_id>/',
+                self.admin_site.admin_view(self.download_images_view),
+                name='download-job-images',
+            ),
+        ]
+        return custom_urls + urls
+    
+    def download_images_view(self, request, job_id):
+        job = Job.objects.get(id=job_id)
+        images = JobImage.objects.filter(job=job)
+        
+        # Create in-memory zip file
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, 'w') as zip_file:
+            for image in images:
+                image_name = os.path.basename(image.image.name)
+                zip_file.writestr(image_name, image.image.read())
+        
+        buffer.seek(0)
+        response = HttpResponse(buffer, content_type='application/zip')
+        response['Content-Disposition'] = f'attachment; filename="{job.id}_images.zip"'
+        return response
+    
+    # Button in change list view
+    def download_images_button(self, obj):
+        return format_html(
+            '<a class="button" href="{}">Download Images</a>',
+            reverse('admin:download-job-images', args=[obj.pk])
+        )
+    download_images_button.short_description = 'Download Images'
+    download_images_button.allow_tags = True
     
 admin.site.register(Job,JobAdmin)
 
