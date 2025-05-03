@@ -82,10 +82,55 @@ class JobAdmin(admin.ModelAdmin):
         return "No Load Time"
     load_time.short_description = 'Load Time'
 
+    def arrived_site_time(self, obj: Job):
+        arrived_site = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_site).first()
+        if not arrived_site:
+            return "No Arrived Site Time"
+        return timezone.localtime(arrived_site.submitted_at).strftime("%B %d, %Y, %I:%M %p") if arrived_site else None
+
+    def travel_time(self, obj: Job):
+        arrived_site = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_site).first()
+        if not arrived_site:
+            return "No Travel Time"
+        arrived_site_time = arrived_site.submitted_at if arrived_site else None
+        arrived_site_time = timezone.localtime(arrived_site_time) if arrived_site_time else None
+        departed_at = obj.departed_at if obj.departed_at else None
+
+        # Calculate travel time, out should be HH:MM
+        if arrived_site_time and departed_at:
+            travel_time =  arrived_site_time - departed_at
+            hours, remainder = divmod(travel_time.seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}"
+        return "No Travel Time"
+    
+    travel_time.short_description = 'Travel Time'
+
+    def unload_time(self, obj: Job):
+        # Diff between finished_at and arrived_site_time
+        finished_at = obj.finished_at if obj.finished_at else None
+        arrived_site = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_site).first()
+        if not arrived_site:
+            return "No Unload Time"
+        arrived_site_time = arrived_site.submitted_at if arrived_site else None
+        arrived_site_time = timezone.localtime(arrived_site_time) if arrived_site_time else None
+        # Calculate unload time, out should be HH:MM
+        if finished_at and arrived_site_time:
+            unload_time = finished_at - arrived_site_time
+            hours, remainder = divmod(unload_time.seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}"
+        return "No Unload Time"
+    
+    unload_time.short_description = 'Unload Time'
+
     readonly_fields = ['signature_thumbnail', 'started_at',
         'arrived_job_time',
-        'departed_at',
         'load_time',
+        'departed_at',
+        'travel_time',
+        'arrived_site_time',
+        'unload_time',
         'finished_at',
         'break_start',
         'break_end',
