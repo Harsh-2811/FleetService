@@ -38,7 +38,7 @@ class JobsView(ModelViewSet):
     def update_depart_time(self, request, *args, **kwargs):
         job: Job = self.get_object()
         
-        job.departed_at = timezone.now()
+        job.departed_at = timezone.localtime(timezone.now())
         job.save()
         return Response({"detail": "Depart time updated successfully."}, status=status.HTTP_200_OK)
 
@@ -200,7 +200,7 @@ class StartJobView(GenericAPIView):
             }, status=status.HTTP_400_BAD_REQUEST)
         job = self.get_object(validated_data['job'])
         job.job_status = Job.JobStatus.RUNNING
-        job.started_at = timezone.now()
+        job.started_at = timezone.localtime(timezone.now())
         job.save()
         return Response({
             "detail": "Job started successfully."

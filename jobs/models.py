@@ -85,7 +85,7 @@ class JobImage(models.Model):
     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name='job_image')
     action_type = models.CharField(max_length=11,choices=ActionType.choices)
     image=models.ImageField(upload_to='images/',null=True,blank=True)
-
+    submitted_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

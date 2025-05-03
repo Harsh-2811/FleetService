@@ -62,13 +62,13 @@ class JobAdmin(admin.ModelAdmin):
         arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Arrived Job Time"
-        return arrived_job.created_at if arrived_job else None
+        return arrived_job.submitted_at.strftime("%M %d, %Y, %I:%M %p") if arrived_job else None
 
     def load_time(self, obj: Job):
         arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Load Time"
-        arrived_job_time = arrived_job.created_at if arrived_job else None
+        arrived_job_time = arrived_job.submitted_at if arrived_job else None
         departed_at = obj.departed_at if obj.departed_at else None
 
         # Calculate load time, out should be HH:MM
@@ -81,8 +81,8 @@ class JobAdmin(admin.ModelAdmin):
     load_time.short_description = 'Load Time'
 
     readonly_fields = ['signature_thumbnail', 'started_at',
-        'departed_at',
         'arrived_job_time',
+        'departed_at',
         'load_time',
         'finished_at',
         'break_start',

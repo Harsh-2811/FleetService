@@ -50,7 +50,7 @@ class JobInfoManySerializer(serializers.ModelSerializer):
         
         job.job_status = Job.JobStatus.RUNNING
         job.filled_pdf = filled_pdf
-        job.started_at = timezone.now()
+        job.started_at = timezone.localtime(timezone.now())
         job.save()
 
         return job
@@ -156,7 +156,7 @@ class FinishJobSerializer(serializers.ModelSerializer):
             JobInfo.objects.create(job=instance, **form_field)
 
         instance.job_status = Job.JobStatus.FINISHED
-        instance.finished_at = timezone.now()
+        instance.finished_at = timezone.localtime(timezone.now())
         instance.finish_reason = finish_reason
         instance.save()
 
@@ -197,7 +197,7 @@ class JobImageSerializer(serializers.ModelSerializer):
         action_type = validated_data.get("action_type")
 
         for image in images:
-            JobImage.objects.create(job=job, image=image, action_type=action_type)
+            JobImage.objects.create(job=job, image=image, action_type=action_type, submitted_at=timezone.localtime(timezone.now()))
 
         return job
     
