@@ -58,6 +58,12 @@ class JobAdmin(admin.ModelAdmin):
         return "No Signature"
     signature_thumbnail.short_description = 'Signature'
 
+    def arrived_job_time(self, obj: Job):
+        arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
+        if not arrived_job:
+            return "No Arrived Job Time"
+        return arrived_job.created_at if arrived_job else None
+
     def load_time(self, obj: Job):
         arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
@@ -76,6 +82,7 @@ class JobAdmin(admin.ModelAdmin):
 
     readonly_fields = ['signature_thumbnail', 'started_at',
         'departed_at',
+        'arrived_job_time',
         'load_time',
         'finished_at',
         'break_start',
