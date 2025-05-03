@@ -22,7 +22,7 @@ class JobsView(ModelViewSet):
     filter_backends = [DjangoFilterBackend]
     filterset_class = JobStatusFilter
     queryset=Job.objects.all()
-    http_method_names=['get']
+    http_method_names=['get', 'post']
 
     def get_queryset(self):
         today = datetime.date.today()
@@ -34,7 +34,7 @@ class JobsView(ModelViewSet):
         ) 
         return queryset
     
-    @action(detail=True, methods=['patch'])
+    @action(detail=True, methods=['post'])
     def update_depart_time(self, request, *args, **kwargs):
         job: Job = self.get_object()
         
