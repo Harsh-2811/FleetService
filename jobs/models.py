@@ -25,6 +25,7 @@ class Job(models.Model):
     vehicle=models.ForeignKey(Vehicle,on_delete=models.CASCADE, related_name='vehicles')
     
     started_at = models.DateTimeField(null=True, blank=True)
+    departed_at = models.DateTimeField(null=True, blank=True)
     break_start = models.DateTimeField(null=True, blank=True)
     break_end = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)

@@ -47,16 +47,6 @@ class JobAdmin(admin.ModelAdmin):
         'job_status',
         'vehicle_plate_number',
     ]
-    readonly_fields = [
-        'started_at',
-        'break_start',
-        'break_end',
-        'finished_at',
-        'finish_reason',
-        'signature',
-        
-    ]
-    
     inlines = [JobImageInline, JobInfoInline]
     def vehicle_plate_number(self, obj):
         return obj.vehicle.plate_number  # Access the vehicle's plate number field
@@ -68,7 +58,30 @@ class JobAdmin(admin.ModelAdmin):
         return "No Signature"
     signature_thumbnail.short_description = 'Signature'
 
-    readonly_fields = ['signature_thumbnail']
+    def load_time(self, obj: Job):
+        arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
+        if not arrived_job:
+            return "No Load Time"
+        arrived_job_time = arrived_job.created_at if arrived_job else None
+        departed_at = obj.departed_at if obj.departed_at else None
+
+        # Calculate load time, out should be HH:MM
+        if arrived_job_time and departed_at:
+            load_time = departed_at - arrived_job_time
+            hours, remainder = divmod(load_time.seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}"
+        return "No Load Time"
+    load_time.short_description = 'Load Time'
+
+    readonly_fields = ['signature_thumbnail', 'started_at',
+        'departed_at',
+        'load_time',
+        'finished_at',
+        'break_start',
+        'break_end',
+        'finish_reason',
+        'signature']
     
     list_filter=[
         'driver',

@@ -14,6 +14,7 @@ from rest_framework.status import HTTP_200_OK
 from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.decorators import action
 
 class JobsView(ModelViewSet):
     permission_classes=[IsAuthenticated]
@@ -32,6 +33,22 @@ class JobsView(ModelViewSet):
             job_date=today,
         ) 
         return queryset
+    
+    @action(detail=True, methods=['patch'])
+    def update_depart_time(self, request, *args, **kwargs):
+        job: Job = self.get_object()
+        
+        job.departed_at = timezone.now()
+        job.save()
+        return Response({"detail": "Depart time updated successfully."}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['get'])
+    def is_departed(self, request, *args, **kwargs):
+        job: Job = self.get_object()
+        if job.departed_at:
+            return Response({"is_departed": True}, status=status.HTTP_200_OK)
+        else:
+            return Response({"is_departed": False}, status=status.HTTP_200_OK)
 
 # StartJobView
 class AddJobInfoViewSet(ModelViewSet):
