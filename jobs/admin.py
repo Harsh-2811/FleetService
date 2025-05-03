@@ -60,7 +60,7 @@ class JobAdmin(admin.ModelAdmin):
     signature_thumbnail.short_description = 'Signature'
 
     def arrived_job_time(self, obj: Job):
-        arrived_job = JobImage.objects.filter(job=job, action_type=JobImage.ActionType.arrive_job).first()
+        arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Arrived Job Time"
         return timezone.localtime(arrived_job.submitted_at).strftime("%B %d, %Y, %I:%M %p") if arrived_job else None
