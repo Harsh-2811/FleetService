@@ -10,6 +10,7 @@ from rangefilter.filters import (
 )
 from django.utils.html import format_html
 from django.urls import reverse
+from django.utils import timezone
 
 
 class JobImageInline(admin.TabularInline):
@@ -59,16 +60,17 @@ class JobAdmin(admin.ModelAdmin):
     signature_thumbnail.short_description = 'Signature'
 
     def arrived_job_time(self, obj: Job):
-        arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
+        arrived_job = JobImage.objects.filter(job=job, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Arrived Job Time"
-        return arrived_job.submitted_at.strftime("%M %d, %Y, %I:%M %p") if arrived_job else None
+        return timezone.localtime(arrived_job.submitted_at).strftime("%B %d, %Y, %I:%M %p") if arrived_job else None
 
     def load_time(self, obj: Job):
         arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Load Time"
         arrived_job_time = arrived_job.submitted_at if arrived_job else None
+        arrived_job_time = timezone.localtime(arrived_job_time) if arrived_job_time else None
         departed_at = obj.departed_at if obj.departed_at else None
 
         # Calculate load time, out should be HH:MM
