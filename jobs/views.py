@@ -34,7 +34,7 @@ class JobsView(ModelViewSet):
         ) 
         return queryset
     
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['patch'], serializer_class=None)
     def update_depart_time(self, request, *args, **kwargs):
         job: Job = self.get_object()
         
