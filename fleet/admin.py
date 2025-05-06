@@ -95,16 +95,24 @@ class DriverAdmin(admin.ModelAdmin):
                 breakdown[week_key][day_name] += hours
                 current = segment_end
 
-        html = '<div style="font-family: Arial; margin-top: 10px;">'
-        for week, days in breakdown.items():
-            html += f'<h3>{week}</h3>'
-            html += '<table style="border-collapse: collapse; width: 60%;">'
-            html += '<tr><th style="border: 1px solid #ccc; padding: 6px;">Day</th><th style="border: 1px solid #ccc; padding: 6px;">Hours</th></tr>'
-            for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
-                hours = days[day].quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
-                html += f'<tr><td style="border: 1px solid #ccc; padding: 6px;">{day}</td><td style="border: 1px solid #ccc; padding: 6px;">{hours}</td></tr>'
-            html += '</table><br>'
-        html += '</div>'
+            html = '<div style="font-family: Arial; margin-top: 10px;">'
+            for week, days in breakdown.items():
+                html += f'<h3>{week}</h3>'
+                html += '<table style="border-collapse: collapse; width: 60%;">'
+                html += '<tr><th style="border: 1px solid #ccc; padding: 6px;">Day</th><th style="border: 1px solid #ccc; padding: 6px;">Hours</th></tr>'
+                
+                total_week_hours = Decimal('0.00')
+                
+                for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]:
+                    hours = days[day].quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                    total_week_hours += hours
+                    html += f'<tr><td style="border: 1px solid #ccc; padding: 6px;">{day}</td><td style="border: 1px solid #ccc; padding: 6px;">{hours}</td></tr>'
+                
+                total_week_hours = total_week_hours.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+                html += f'<tr style="font-weight: bold;"><td style="border: 1px solid #ccc; padding: 6px;">Total</td><td style="border: 1px solid #ccc; padding: 6px;">{total_week_hours}</td></tr>'
+                
+                html += '</table><br>'
+
         return mark_safe(html)
 
     weekly_hours_breakdown.short_description = "Worked Hours"
