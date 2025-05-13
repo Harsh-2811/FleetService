@@ -11,7 +11,7 @@ from rangefilter.filters import (
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils import timezone
-from .utils import load_time, travel_time, unload_time, total_time
+from .utils import load_time, travel_time, unload_time, total_time, total_job_time
 
 
 
@@ -89,7 +89,7 @@ class JobAdmin(admin.ModelAdmin):
     unload_time.short_description = 'Unload Time'
     
     def total_time(self, obj):
-        return total_time(obj)
+        return total_job_time(obj)
     total_time.short_description = 'Total Time'
 
     readonly_fields = ['signature_thumbnail', 'started_at',

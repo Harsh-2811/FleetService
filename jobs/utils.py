@@ -120,8 +120,30 @@ def unload_time(obj: Job):
 
 # unload_time.short_description = 'Unload Time'
 
+def total_time(date):
+    prefill_start_checks = PrefillChecks.objects.filter(
+        date = date,
+        check_type = PrefillChecks.ChecksTypes.start_day,
+    )
+    prefill_end_checks = PrefillChecks.objects.filter(
+        date = date,
+        check_type = PrefillChecks.ChecksTypes.finish_day,
+    )
+    if prefill_start_checks.exists() and prefill_end_checks.exists():
+        start_time = prefill_start_checks.first().created_at
+        end_time = prefill_end_checks.first().created_at
+        if start_time and end_time:
+            start_time = timezone.localtime(start_time)
+            end_time = timezone.localtime(end_time)
+            total_duration = end_time - start_time
+            hours, remainder = divmod(total_duration.seconds, 3600)
+            minutes, _ = divmod(remainder, 60)
+            return f"{hours:02}:{minutes:02}"
+    else:
+        return "00:00"
 
-def total_time(obj: Job):
+
+def total_job_time(obj: Job):
     def parse_time(time_str):
         try:
             hours, minutes = map(int, time_str.split(":"))

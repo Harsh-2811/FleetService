@@ -7,7 +7,7 @@ from decimal import Decimal, ROUND_HALF_UP
 from .models import Driver, Vehicle
 from jobs.models import Job
 from datetime import datetime
-from jobs.utils import total_time
+from jobs.utils import total_time, total_job_time
 
 
 class DriverAdmin(admin.ModelAdmin):
@@ -87,9 +87,9 @@ class DriverAdmin(admin.ModelAdmin):
                 "Sunday": Decimal("0.00"),
             }
             for job in jobs:
-                total_hours += Decimal(total_time(job).replace(":", "."))
+                total_hours += Decimal(total_job_time(job).replace(":", "."))
                 job_day = job.started_at.strftime("%A")
-                daily_hours[job_day] += Decimal(total_time(job).replace(":", "."))
+                daily_hours[job_day] += Decimal(total_job_time(job).replace(":", "."))
                 if job.break_start and job.break_end:
                     break_duration = job.break_end - job.break_start
                     break_hours[job_day] += Decimal(
