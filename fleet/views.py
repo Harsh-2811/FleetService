@@ -36,7 +36,7 @@ class JobHistory(RetrieveAPIView):
 class DriverWork(GenericAPIView): 
     def get(self, request, driver_id):
         try:
-            driver = Driver.objects.get(id=driver_id)
+            driver = Driver.objects.get(user=self.request.user)
         except Driver.DoesNotExist:
             return Response({"detail": "Driver not found."}, status=404)
 
