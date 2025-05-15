@@ -67,7 +67,7 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
 
-        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info", "load_time", "unload_time", "travel_time", "total_time"]
+        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info", "load_time", "unload_time", "travel_time", "total_time", "arrived_site_time", "arrived_job_time"]
 
     def get_load_time(self, obj):
         return load_time(obj)
