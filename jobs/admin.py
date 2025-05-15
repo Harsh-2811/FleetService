@@ -46,6 +46,7 @@ class JobInfoInline(admin.TabularInline):
 # Register your models here.
 class JobAdmin(admin.ModelAdmin):
     list_display=[
+        'id',
         'driver',
         'job_title',
         'job_status',
@@ -62,7 +63,7 @@ class JobAdmin(admin.ModelAdmin):
         return "No Signature"
     signature_thumbnail.short_description = 'Signature'
 
-    def arrived_job_time(self, obj: Job):
+    def arrived_job_time(self, obj: Job): # TODO : Remove this Function and Just use field from model
         arrived_job = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_job).first()
         if not arrived_job:
             return "No Arrived Job Time"
@@ -73,7 +74,7 @@ class JobAdmin(admin.ModelAdmin):
     load_time.short_description = 'Load Time'
     
 
-    def arrived_site_time(self, obj: Job):
+    def arrived_site_time(self, obj: Job): # TODO : Remove this Function and Just use field from model
         arrived_site = JobImage.objects.filter(job=obj, action_type=JobImage.ActionType.arrive_site).first()
         if not arrived_site:
             return "No Arrived Site Time"
@@ -104,7 +105,7 @@ class JobAdmin(admin.ModelAdmin):
         'break_end',
         'finish_reason',
         'signature',
-        'total_time']
+        'total_time',]
     
     list_filter=[
         'driver',

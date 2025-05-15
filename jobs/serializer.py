@@ -6,6 +6,7 @@ import base64
 from django.core.files.base import ContentFile
 from fleet.serializer import *
 from django.utils import timezone
+from .utils import *
 
 class Base64FileField(serializers.FileField):
     def to_internal_value(self, data):
@@ -58,11 +59,28 @@ class JobInfoManySerializer(serializers.ModelSerializer):
 class JobSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer(read_only=True)
     job_info = JobInfoFieldsSerializer(many=True)
+    
+    load_time = serializers.SerializerMethodField()
+    unload_time = serializers.SerializerMethodField()
+    travel_time = serializers.SerializerMethodField()
+    total_time = serializers.SerializerMethodField()
     class Meta:
         model = Job
 
-        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info"]
+        fields = ["id", "job_title", "vehicle", "job_data", "job_status", "job_date", "job_info", "load_time", "unload_time", "travel_time", "total_time"]
 
+    def get_load_time(self, obj):
+        return load_time(obj)
+
+    def get_unload_time(self, obj):
+        return unload_time(obj)
+
+    def get_travel_time(self, obj):
+        return travel_time(obj)
+
+    def get_total_time(self, obj):
+        return total_job_time(obj)
+         
     def to_representation(self, instance):
         response = super().to_representation(instance)
         job_images = JobImage.objects.filter(job=instance, action_type=JobImage.ActionType.arrive_job).values_list("image", flat=True)
@@ -165,30 +183,10 @@ class FinishJobSerializer(serializers.ModelSerializer):
 
 class JobImageSerializer(serializers.ModelSerializer):
     images = serializers.ListField(child=Base64ImageFieldSerializer(), write_only=True)
-
+    
     class Meta:
         model = JobImage
         fields = ["job", "images", "action_type"]
-
-    def validate(self, attrs):
-        action_type = attrs.get("action_type")
-        images = attrs.get("images")
-
-        # if action_type == JobImage.ActionType.arrive_job and len(images) < 4:
-        #     raise serializers.ValidationError(
-        #         {
-        #             "detail": "You have to upload minimum 4 images for Arrive Job."
-        #         }
-        #     )
-
-        # if action_type == JobImage.ActionType.arrive_site and len(images) < 5:
-        #     raise serializers.ValidationError(
-        #         {
-        #             "detail": "You have to upload minimum 5 images for Arrive Site."
-        #         }
-        #     )
-
-        return attrs
 
 
     def create(self, validated_data):
@@ -240,3 +238,8 @@ class UploadPdfSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ['filled_pdf']
+        
+class JobArrivalSerializer(serializers.Serializer):
+    job = serializers.IntegerField()
+    action_type = serializers.CharField()
+    

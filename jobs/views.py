@@ -15,6 +15,8 @@ from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import action
+from .utils import load_time, unload_time, travel_time, total_job_time 
+
 
 class JobsView(ModelViewSet):
     permission_classes=[IsAuthenticated]
@@ -244,3 +246,47 @@ class FillPDF(UpdateAPIView):
         return Response({
             "detail": "Pdf Uploaded successfully"
         }, status=status.HTTP_200_OK)
+        
+
+        
+class UpdateArrivalTimeAPI(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = JobArrivalSerializer
+    
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=400)
+
+        job_id = serializer.validated_data["job"]
+        action_type = serializer.validated_data["action_type"]
+
+        if action_type not in ['site', 'job']:
+            return Response({"error": "action_type must be 'site' or 'job'"}, status=400)
+
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return Response({"error": "Job not found"}, status=404)
+
+
+        if action_type == 'site':
+            job.arrived_site_time = timezone.now()
+        else:
+            job.arrived_job_time = timezone.now()
+
+        job.save()
+
+        return Response({"detail": f"{action_type} Arrival Time Updated"})
+class GetJobArrivalTimesAPI(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request, job_id):
+        try:
+            job = Job.objects.get(id=job_id)
+        except Job.DoesNotExist:
+            return Response({"error": "Job not found"}, status=404)
+
+        return Response({
+            "arrived_site_time": job.arrived_site_time,
+            "arrived_job_time": job.arrived_job_time,
+        }, status=200)

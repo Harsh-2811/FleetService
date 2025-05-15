@@ -30,6 +30,9 @@ class Job(models.Model):
     break_end = models.DateTimeField(null=True, blank=True)
     finished_at = models.DateTimeField(null=True, blank=True)
     finish_reason = models.TextField(max_length=200,null=True,blank=True)
+    
+    arrived_site_time= models.DateTimeField(null=True, blank=True)
+    arrived_job_time = models.DateTimeField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
